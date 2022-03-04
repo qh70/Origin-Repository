@@ -165,6 +165,7 @@ def api_attraction_id(attractionId):
 			my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %attractionId)
 			page_data=my_cursor.fetchone()
 			page_data9=page_data[9].split(" ",-1)
+			print('123')
 
 			page_show={
 				"id": page_data[0],
