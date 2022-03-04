@@ -116,40 +116,45 @@ def attractions():
 	
 	# step1-2. 沒有 keyword，只有 page
 	else:
-		# page 在 4 之內
-		if page<=data_count_for_page:
-			# 處理 nextPage
-			if page<data_count_for_page:
-				nextPage=page+1
-			else: nextPage=None
+		# 當 page 是數字
+		page_is_N=page.isnumeric()
+		if page_is_N:
+			# page 在 4 之內
+			if page<=data_count_for_page:
+				# 處理 nextPage
+				if page<data_count_for_page:
+					nextPage=page+1
+				else: nextPage=None
 
 
-			# 用page把資料抓下來
-			show_page0_to_full=[] # 所有符合 page 的資料
-			for j in range(page*12,page*12+12):
-				j=j+1
-				my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %j)
-				page_data=my_cursor.fetchone()
-				if page_data != None:
-					page_data9=page_data[9].split(" ",-1)
+				# 用page把資料抓下來
+				show_page0_to_full=[] # 所有符合 page 的資料
+				for j in range(page*12,page*12+12):
+					j=j+1
+					my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %j)
+					page_data=my_cursor.fetchone()
+					if page_data != None:
+						page_data9=page_data[9].split(" ",-1)
 
-					page_show={
-						"id": page_data[0],
-						"name": page_data[1],
-						"category": page_data[2],
-						"description": page_data[3],
-						"address": page_data[4],
-						"transport": page_data[5],
-						"mrt": page_data[6],
-						"latitude": page_data[7],
-						"longitude": page_data[8],
-						"images": page_data9
-					}
-					show_page0_to_full.append(page_show.copy())
-			return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
-		# page 不在 4 之內
+						page_show={
+							"id": page_data[0],
+							"name": page_data[1],
+							"category": page_data[2],
+							"description": page_data[3],
+							"address": page_data[4],
+							"transport": page_data[5],
+							"mrt": page_data[6],
+							"latitude": page_data[7],
+							"longitude": page_data[8],
+							"images": page_data9
+						}
+						show_page0_to_full.append(page_show.copy())
+				return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
+			# page 不在 4 之內
+			else:
+				return jsonify({"error": True,"message": "超過分頁"})
 		else:
-			return jsonify({"error": True,"message": "超過分頁"})
+			return jsonify({"error": True,"message": "請輸入正整數"})
 
 @app.route("/api/attraction/<attractionId>")
 def api_attraction_id(attractionId):
