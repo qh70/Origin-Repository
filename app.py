@@ -36,8 +36,9 @@ def thankyou():
 def attractions():
 	# 兩個變數 page 和 keyword
 	keyword=request.args.get("keyword")
-	page=request.args.get("page")
-	page=int(page)
+	page_str=request.args.get("page")
+	if page_str.isnumeric():
+		page=int(page_str)
 
 	# step1-1. 有 keyword
 	if keyword!=None:
@@ -117,7 +118,7 @@ def attractions():
 	# step1-2. 沒有 keyword，只有 page
 	else:
 		# 當 page 是數字
-		page_is_N=page.isnumeric()
+		page_is_N=page_str.isnumeric()
 		if page_is_N:
 			# page 在 4 之內
 			if page<=data_count_for_page:
