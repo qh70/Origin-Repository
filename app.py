@@ -6,7 +6,7 @@ app.config["TEMPLATES_AUTO_RELOAD"]=True
 import mysql.connector
 mydb=mysql.connector.connect(
         host="localhost",
-        user="root",
+        user="jerry",
         password="12345678",
         database="tourist_data"
     )
