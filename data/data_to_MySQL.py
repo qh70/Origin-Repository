@@ -3,7 +3,7 @@ import json
 from sre_constants import CATEGORY
 from unicodedata import category
 
-with open("F:/第二階段/Origin-Repository/data/taipei-attractions.json",mode="r",encoding="utf-8") as response:
+with open("taipei-attractions.json",mode="r",encoding="utf-8") as response:
     data=json.load(response)
 
 import mysql.connector
