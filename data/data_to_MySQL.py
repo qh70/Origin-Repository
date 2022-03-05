@@ -40,7 +40,7 @@ for k in range(len(data["result"]["results"])):
             cleaned_file.append(file[j])
     cleaned_file=" ".join(cleaned_file)
     images=cleaned_file
-    my_cursor.execute("INSERT INTO sub_data (id,name,category,description,address,transport,mrt,latitude,longitude,images) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",(id,name,categories,description,address,transport,mrt,latitude,longitude,images))
+    my_cursor.execute("INSERT INTO sub_data (id,name,category,description,address,transport,mrt,latitude,longitude,image) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",(id,name,categories,description,address,transport,mrt,latitude,longitude,images))
 mydb.commit()
 
 # 把整個網址分成個別網址
