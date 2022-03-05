@@ -9,7 +9,7 @@ with open("F:/第二階段/Origin-Repository/data/taipei-attractions.json",mode=
 import mysql.connector
 mydb=mysql.connector.connect(
         host="localhost",
-        user="root",
+        user="jerry",
         password="12345678",
         database="tourist_data"
     )
@@ -18,7 +18,7 @@ my_cursor=mydb.cursor()
 for k in range(len(data["result"]["results"])):
     id=k+1
     name=data["result"]["results"][k]["stitle"]
-    category=data["result"]["results"][k]["CAT2"]
+    categories=data["result"]["results"][k]["CAT2"]
     description=data["result"]["results"][k]["xbody"]
     address=data["result"]["results"][k]["address"]
     transport=data["result"]["results"][k]["info"]
