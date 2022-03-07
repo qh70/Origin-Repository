@@ -28,6 +28,7 @@ def thankyou():
 
 @app.route("/api/attractions")
 def api_attractions():
+	# test
 	# 求資料長度
 	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
 	data_count=my_cursor.fetchone()[0] # 資料長度
