@@ -8,13 +8,31 @@ app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 
 import mysql.connector
-mydb=mysql.connector.connect(
-        host="localhost",
-        user="jerry",
-        password="12345678",
-        database="tourist_data"
-    )
-my_cursor=mydb.cursor()
+
+
+# 嘗試 connection pool 註解掉
+
+# mydb=mysql.connector.connect(
+#         host="localhost",
+#         user="jerry",
+#         password="12345678",
+#         database="tourist_data"
+#     )
+# my_cursor=mydb.cursor()
+
+
+# 嘗試 connection pool
+from mysql.connector import Error, pooling
+pool=pooling.MySQLConnectionPool(
+	host="localhost",
+	user="jerry",
+	password="12345678",
+	database="tourist_data",
+	pool_name="mypool",
+	pool_size=3,
+)
+db_connection_mydb=pool.get_connection()
+my_cursor=db_connection_mydb.cursor()
 
 # Pages
 @app.route("/")
@@ -51,7 +69,7 @@ def api_attractions():
 				nextPage=page+1
 			else: nextPage=None
 			page12=str(page*12)
-			my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",12")
+			my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",13")
 			keyword_result=my_cursor.fetchall()# 用 keyword 搜尋到的資料集合
 			# step 2-1. 搜尋到的資料集合有東西
 			if keyword_result != []:
@@ -74,7 +92,7 @@ def api_attractions():
 							"images": keyword_data_k_9
 						}
 						show_keyword0_to_full.append(keyword_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
+					return jsonify({"nextPage":None,"data":show_keyword0_to_full}) # 沒有nextPage
 				# 有到 12 筆
 				else:
 					for k in range(12):
@@ -93,7 +111,10 @@ def api_attractions():
 							"images": keyword_data_k_9
 						}
 						show_keyword0_to_full.append(keyword_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
+					if len(keyword_result)==12:
+						return jsonify({"nextPage":None,"data":show_keyword0_to_full})# 沒有nextPage
+					else:
+						return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full})
 			# step 2-1. 搜尋到的資料集合沒有東西
 			else:
 				return jsonify({"error": True,"message": "沒有此關鍵字的資料"})
