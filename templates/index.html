@@ -5,17 +5,20 @@
         <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
         <title>台北市景點列表</title>
         <script type="text/javascript">
-            let mydata;
+            let nextPage;
+            let attractions_data;
+            let btn_function;
+            let keyword_nextPage;
+            let search_tourist_name_value;
             function getData(){
                 let req=new XMLHttpRequest();
-                // for(let i=0;i<5;i++){
-                req.open("get","http://192.168.0.12:3000/api/attractions?page=0")
+                req.open("get","http://192.168.0.15:3000/api/attractions?page=0")
                 req.onload=function(){
-                    let attractions_data=JSON.parse(this.responseText)
+                    attractions_data=JSON.parse(this.responseText)
                     for(let j=0;j<12;j++){
                         let div1=document.createElement("div");
                         div1.className="picline1";
-                        newDiv.appendChild(div1);
+                        newdiv.appendChild(div1);
                         //img
                         let image=document.createElement("img");
                         image.className="first4pics";
@@ -45,11 +48,183 @@
                         down_word_zone.appendChild(down_word_right);
                     }
                     
-                    
                 }
                 req.send();
-                // }  
             }
+            
+            window.onscroll = ()=>{
+                // console.log('可視高度'+document.documentElement.clientHeight);
+                // console.log('總高度'+document.documentElement.scrollHeight);
+                // console.log('捲進去的高度：'+document.documentElement.scrollTop);
+                nextPage=attractions_data["nextPage"]
+                let cHeight = document.documentElement.clientHeight;
+                let sHeight = document.documentElement.scrollHeight;
+                let sTop = document.documentElement.scrollTop;
+                // let search_tourist_name=document.getElementById("search_tourist_name");
+                if(sHeight == cHeight+ sTop) {
+                    // console.log(search_tourist_name_value)
+                    // console.log(nextPage)
+                    // console.log(btn_function)
+
+                    // 沒有keyword
+                    if(nextPage!=null&btn_function!="yes"){
+                        let req=new XMLHttpRequest();
+                        req.open("get","http://192.168.0.15:3000/api/attractions?page="+nextPage+"")
+                        req.onload=function(){
+                            attractions_data=JSON.parse(this.responseText)
+                            for(let j=0;j<12;j++){
+                                if(attractions_data["data"][j]!=undefined){
+                                    let div1=document.createElement("div");
+                                    div1.className="picline1";
+                                    newdiv.appendChild(div1);
+                                    
+                                    //img
+                                    let image=document.createElement("img");
+                                    image.className="first4pics";
+                                    image.src=attractions_data["data"][j]["images"][0];
+                                    div1.appendChild(image);
+                                    // up_word
+                                    let up_word=document.createElement("div");
+                                    up_word.className="up_word";
+                                    up_word.innerHTML=attractions_data["data"][j]["name"]
+                                    div1.appendChild(up_word);
+                                    // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
+                                    // up_word.appendChild(textNode_up);
+
+                                    // down_word_zone
+                                    let down_word_zone=document.createElement("div");
+                                    down_word_zone.className="down_word_zone"
+                                    div1.appendChild(down_word_zone)
+                                    // down_word_left
+                                    let down_word_left=document.createElement("div");
+                                    down_word_left.className="down_word_left";
+                                    down_word_left.innerHTML=attractions_data["data"][j]["mrt"];
+                                    down_word_zone.appendChild(down_word_left);
+                                    // down_word_right
+                                    let down_word_right=document.createElement("div");
+                                    down_word_right.className="down_word_right";
+                                    down_word_right.innerHTML=attractions_data["data"][j]["category"];
+                                    down_word_zone.appendChild(down_word_right);
+                                }
+                            }
+                        // nextpage=attractions_data["data"]["nextPage"]
+                            
+                        }
+                        req.send();
+                    }
+                    // 有 keyword，有下頁
+                    else if(keyword_nextPage>0&keyword_nextPage!=null&btn_function==="yes"){
+                        let req=new XMLHttpRequest();
+                        req.open("get","http://192.168.0.15:3000/api/attractions?page="+keyword_nextPage+"&keyword="+search_tourist_name_value+"")
+                        req.onload=function(){
+                            attractions_data=JSON.parse(this.responseText)
+                            for(let j=0;j<12;j++){
+                                if(attractions_data["data"][j]!=undefined){
+                                    let div1=document.createElement("div");
+                                    div1.className="picline1";
+                                    newdiv.appendChild(div1);
+                                    
+                                    //img
+                                    let image=document.createElement("img");
+                                    image.className="first4pics";
+                                    image.src=attractions_data["data"][j]["images"][0];
+                                    div1.appendChild(image);
+                                    // up_word
+                                    let up_word=document.createElement("div");
+                                    up_word.className="up_word";
+                                    up_word.innerHTML=attractions_data["data"][j]["name"]
+                                    div1.appendChild(up_word);
+                                    // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
+                                    // up_word.appendChild(textNode_up);
+
+                                    // down_word_zone
+                                    let down_word_zone=document.createElement("div");
+                                    down_word_zone.className="down_word_zone"
+                                    div1.appendChild(down_word_zone)
+                                    // down_word_left
+                                    let down_word_left=document.createElement("div");
+                                    down_word_left.className="down_word_left";
+                                    down_word_left.innerHTML=attractions_data["data"][j]["mrt"];
+                                    down_word_zone.appendChild(down_word_left);
+                                    // down_word_right
+                                    let down_word_right=document.createElement("div");
+                                    down_word_right.className="down_word_right";
+                                    down_word_right.innerHTML=attractions_data["data"][j]["category"];
+                                    down_word_zone.appendChild(down_word_right);
+                                }
+                            }
+                            keyword_nextPage=attractions_data["nextPage"]
+                        // nextpage=attractions_data["data"]["nextPage"]
+                        }
+                        req.send();
+                    }
+                }
+            }
+
+            let search_tourist_name=document.getElementById("search_tourist_name")
+            search_tourist_name.addEventListener("keydown",function(e){
+                if(e.keyCode === 13){
+                    console.log("yes");
+                }
+            },false);
+
+            function btn(){
+                search_tourist_name_value=document.getElementById("search_tourist_name").value;
+                newdiv.innerHTML=null;
+                let req=new XMLHttpRequest();
+                req.open("get","http://192.168.0.15:3000/api/attractions?page=0&keyword="+search_tourist_name_value+"")
+                req.onload=function(){
+                    attractions_data=JSON.parse(this.responseText)
+                    console.log(attractions_data)
+                    if(attractions_data["message"]=="沒有此關鍵字的資料"){
+                        newdiv.innerHTML="沒有此關鍵字的資料"
+                    }
+                    else{
+                        for(let j=0;j<12;j++){
+                            if(attractions_data["data"][j]!=undefined){
+                                let div1=document.createElement("div");
+                                div1.className="picline1";
+                                newdiv.appendChild(div1);
+                                //img
+                                let image=document.createElement("img");
+                                image.className="first4pics";
+                                image.src=attractions_data["data"][j]["images"][0];
+                                div1.appendChild(image);
+                                // up_word
+                                let up_word=document.createElement("div");
+                                up_word.className="up_word";
+                                up_word.innerHTML=attractions_data["data"][j]["name"]
+                                div1.appendChild(up_word);
+                                // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
+                                // up_word.appendChild(textNode_up);
+
+                                // down_word_zone
+                                let down_word_zone=document.createElement("div");
+                                down_word_zone.className="down_word_zone"
+                                div1.appendChild(down_word_zone)
+                                // down_word_left
+                                let down_word_left=document.createElement("div");
+                                down_word_left.className="down_word_left";
+                                down_word_left.innerHTML=attractions_data["data"][j]["mrt"];
+                                down_word_zone.appendChild(down_word_left);
+                                // down_word_right
+                                let down_word_right=document.createElement("div");
+                                down_word_right.className="down_word_right";
+                                down_word_right.innerHTML=attractions_data["data"][j]["category"];
+                                down_word_zone.appendChild(down_word_right);
+                            }
+                        }
+                    }
+                    btn_function="yes";
+                    keyword_nextPage=attractions_data["nextPage"];
+                }
+                req.send();                
+            }
+
+            
+
+            
+
             // let mydata;
             // function getData(){
             //     let req=new XMLHttpRequest();
@@ -156,6 +331,7 @@
             .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
             .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;}
             .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;}
+            
             /* 第二層 */
             .second_bar_background{height: 320px;display: flex;align-items: center;justify-content: center;margin: 0px;
                 background-image:url(CKS_Memory_Hall.png),linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
@@ -169,41 +345,99 @@
             .explore_every_corner{width: 1180px;height: 20px;margin: 10px;color: white;text-align: left;font-weight: 400;font-size: 16px;line-height: 13.3px;}
             /* 輸入景點名稱查詢 */
             .insert_and_btn{width: 460px;height: 46px;display: flex;margin-top: 15px;margin-left: 10px;}
-            .insert_tourist_name{width: 400px;height: 46px;margin: 0px;box-sizing: border-box;border: 0px;
+            .search_tourist_name{width: 400px;height: 46px;margin: 0px;box-sizing: border-box;border: 0px;
                 border-top-left-radius: 9px;border-bottom-left-radius: 9px;}
             .btn{width: 60px;height: 46px;margin: 0px;background-color: #448899;box-sizing: border-box;border: 0px;
                 border-top-right-radius: 15%;border-bottom-right-radius: 15%;}
             ::placeholder { color: #757575;}
+
             /* 第三層 */
-            .newdiv{width: 1200px;height: 816px;
+            .newdiv{width: 1200px;
                 display: flex;justify-content: center;flex-wrap:wrap;margin: auto;
-                margin-top: 40px;margin-bottom: 40px;
+                margin-top: 40px;
                 /* background-color: blue; */
             }
             .picline1{width: 270px;height: 242px;margin:15px;flex: none;border-radius: 5px;border:rgb(211, 210, 210) solid;box-sizing: border-box;} /* 12個方框 */
-            .first4pics{width:265px;height:162px;display:block;display: block;box-sizing: border-box;} /* 方框裡的照片 */
-            .up_word{width:270px;height:40px;font-size: 16px;font-weight: 700;line-height: 40px;padding-left: 10px;box-sizing: border-box;}/* 方框裡的上層字 */
+            .first4pics{width:265px;height:162px;display: block;box-sizing: border-box;} /* 方框裡的照片 */
+            .up_word{width:270px;height:40px;font-size: 0.9rem;font-weight: 700;line-height: 40px;padding-left: 10px;box-sizing: border-box;}/* 方框裡的上層字 */
             .down_word_zone{width:270px;height:40px;line-height: 40px;display: flex;} /* 方框裡的下層字區塊 */
             .down_word_left{width: 125px;height: 20px;margin-left: 10px;margin-bottom: 12px;font-size: 16px;text-align: left;}/* 方框裡的下層字區塊左 */
             .down_word_right{width: 125px;height: 20px;margin-right: 10px;margin-bottom: 12px;font-size: 16px;text-align: right;}/* 方框裡的下層字區塊右 */
             
 
             /* 底層 */
-            .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;}
+            .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
             
             @media (max-width:1200px){
+                /* 頂層============================================================ */
+                .navigation_bar{width:100%;height: 54px;}
+                .taipei_oneday_tourist{width: 150px; height: 34px;font-size: 30px;}
+                .item1{width: 64px;height: 14px;margin-right: 10px;font-size: 16px}
+                .item2{width: 71px;height: 14px;margin-right: 10px;font-size: 16px}
+
+                /* 第二層============================================================ */
+                .second_bar_background{width: 100%;height: 280px;display: flex;align-items: center;justify-content: center;margin: 0px;margin-bottom: 55px;
+                background-image:url(CKS_Memory_Hall.png),linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
+                background-repeat: no-repeat;background-position:bottom 0px right 0px, 0px;
+                background-size: 276px 148px,100% 320px;}
+                .three_items_in_one_div{width: 340px;height: 169px;align-items: flex-start;margin-left: auto;margin-right: auto;}
+                /* 輕鬆享受台北一日悠閒 */
+                .easy_enjoy{width: 320px;height: 41px;color: white;font-weight: bold;font-weight: 700;font-size: 28px;text-align: left;line-height: 24px;margin-left: 20px;}
+                /* 探索每個角落，體驗城市的深度旅遊行程 */
+                .explore_every_corner{width: 320px;height: 22px;color: white;text-align: left;font-weight: 400;font-size: 16px;line-height: 13.3px;margin-left: 20px;}
+                /* 輸入景點名稱查詢 */
+                .insert_and_btn{width: 290px;height: 46px;display: flex;margin-top: 25px;margin-left: 20px;}
+                .search_tourist_name{width: 230px;height: 46px;margin: 0px;box-sizing: border-box;border: 0px;
+                    border-top-left-radius: 9px;border-bottom-left-radius: 9px;}
+                .btn{width: 60px;height: 46px;margin: 0px;background-color: #448899;box-sizing: border-box;border: 0px;
+                    border-top-right-radius: 15%;border-bottom-right-radius: 15%;}
+                ::placeholder { color: #757575;}
+
+                /* 第三層============================================================ */
                 .newdiv{width: 100%;}
-                .picline1{width: 45%;height: auto;margin: 10px;margin-bottom: 60px;}
-                .first4pics{width:100%;height: 100%;object-fit: cover;}
-                .word{width:100%;}
-            }@media (max-width:600px){
-                .picline1{width: 85%;}
-                .item{display: none;}
-                .ham{display:block;}
+                .picline1{width:45%;height:280px;margin-top: 15px;margin-left: 10px;margin-right: 10px;}
+                .first4pics{width: 100%;height: 202px;display: block;box-sizing: border-box;object-fit: cover;} /* 方框裡的照片 */
+                .up_word{width: 100%;height:45px;font-size: 16px;font-weight: 700;line-height: 13.3px;margin: 0px;padding-top: 8px;padding-left: 10px;box-sizing: border-box;}/* 方框裡的上層字 */
+                .down_word_zone{width: 100%;height: 33px;display: flex;margin-top: 0px;box-sizing: border-box;} /* 方框裡的下層字區塊 */
+                .down_word_left{width: 50%;height: 20px;line-height:20px;margin-left: 10px;margin-bottom: 13px;font-size: 16px;text-align: left;box-sizing: border-box;}/* 方框裡的下層字區塊左 */
+                .down_word_right{width: 50%;height: 20px;line-height:20px;margin-left:auto;margin-right: 10px;margin-bottom: 13px;font-size: 16px;text-align: right;box-sizing: border-box;}/* 方框裡的下層字區塊右 */
+            }
+            @media (max-width:600px){
+                /* 頂層============================================================ */
+                .navigation_bar{width:100%;height: 54px;}
+                .taipei_oneday_tourist{width: 150px; height: 34px;font-size: 30px;}
+                .item1{width: 64px;height: 14px;margin-right: 10px;font-size: 16px}
+                .item2{width: 71px;height: 14px;margin-right: 10px;font-size: 16px}
+
+                /* 第二層============================================================ */
+                .second_bar_background{width: 100%;height: 280px;display: flex;align-items: center;justify-content: center;margin: 0px;margin-bottom: 55px;
+                background-image:url(CKS_Memory_Hall.png),linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
+                background-repeat: no-repeat;background-position:bottom 0px right -64px, 0px;
+                background-size: 276px 148px,100% 320px;}
+                .three_items_in_one_div{width: 340px;height: 169px;align-items: flex-start;margin-left: auto;margin-right: auto;}
+                /* 輕鬆享受台北一日悠閒 */
+                .easy_enjoy{width: 320px;height: 41px;color: white;font-weight: bold;font-weight: 700;font-size: 28px;text-align: left;line-height: 24px;margin-left: 20px;}
+                /* 探索每個角落，體驗城市的深度旅遊行程 */
+                .explore_every_corner{width: 320px;height: 22px;color: white;text-align: left;font-weight: 400;font-size: 16px;line-height: 13.3px;margin-left: 20px;}
+                /* 輸入景點名稱查詢 */
+                .insert_and_btn{width: 290px;height: 46px;display: flex;margin-top: 25px;margin-left: 20px;}
+                .search_tourist_name{width: 230px;height: 46px;margin: 0px;box-sizing: border-box;border: 0px;
+                    border-top-left-radius: 9px;border-bottom-left-radius: 9px;}
+                .btn{width: 60px;height: 46px;margin: 0px;background-color: #448899;box-sizing: border-box;border: 0px;
+                    border-top-right-radius: 15%;border-bottom-right-radius: 15%;}
+                ::placeholder { color: #757575;}
+
+                /* 第三層============================================================ */
+                .picline1{width:85%;height:280px;margin-top: 15px;margin-left: 20px;margin-right: 18px;}
+                .first4pics{height: 202px;display: block;box-sizing: border-box;} /* 方框裡的照片 */
+                .up_word{width: 100%;height:45px;font-size: 16px;font-weight: 700;line-height: 13.3px;margin: 0px;padding-top: 8px;padding-left: 10px;box-sizing: border-box;}/* 方框裡的上層字 */
+                .down_word_zone{width: 100%;height: 33px;display: flex;margin-top: 0px;box-sizing: border-box;} /* 方框裡的下層字區塊 */
+                .down_word_left{width: 125px;height: 20px;line-height:20px;margin-left: 10px;margin-bottom: 13px;font-size: 16px;text-align: left;}/* 方框裡的下層字區塊左 */
+                .down_word_right{width: 125px;height: 20px;line-height:20px;margin-left:auto;margin-right: 10px;margin-bottom: 13px;font-size: 16px;text-align: right;}/* 方框裡的下層字區塊右 */
             }
         </style>
     </head>
-    <body style="margin: 0px;font: Noto Sans TC;" onload="getData()">
+    <body style="margin: 0px;" onload="getData()">
         <div class="navigation_bar">
             <!-- <div style="display:flex;flex:auto;align-items: center;width:50%;background-color: blueviolet;"> -->
                 <div class="taipei_oneday_tourist">台北一日遊</div>
@@ -218,53 +452,17 @@
                 <div class="easy_enjoy">輕鬆享受台北一日悠閒</div>
                 <div class="explore_every_corner">探索每個角落，體驗城市的深度旅遊行程</div>
                 <div class="insert_and_btn">
-                    <input class="insert_tourist_name" placeholder="輸入景點名稱查詢"></input><button class="btn"><img src="icon_search.png" /></button>
+                    <input class="search_tourist_name" id="search_tourist_name" placeholder="輸入景點名稱查詢">
+                    </input>
+                    <button class="btn" onclick="btn()">
+                        <img src="icon_search.png" />
+                    </button>
                 </div>
             </div>
         </div>
 
 
-        <div class="newdiv" id="newDiv">
-            <!-- <div class="picline1" id="picline">
-                <div class="first4pics" id="first4pic"></div>
-                <div class="word" id="fill-1"></div> -->
-            <!-- </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-2"></div>
-                <div class="word" id="fill-2"></div>
-            </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-3"></div>
-                <div class="word" id="fill-3"></div>
-            </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-4"></div>
-                <div class="word" id="fill-4"></div>
-            </div>
-            
-
-        </div>
-
-        <div style="display: flex;justify-content: center;flex-wrap:wrap;margin-top: 0px;">
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-5"></div>
-                <div class="word" id="fill-5"></div>
-            </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-6"></div>
-                <div class="word" id="fill-6"></div>
-            </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-7"></div>
-                <div class="word" id="fill-7"></div>
-            </div>
-            <div class="picline1">
-                <div class="first4pics" id="first4pic-8"></div>
-                <div class="word" id="fill-8"></div>
-            </div> -->
-            
-
-        </div>
+        <div class="newdiv" id="newdiv"></div>
         <div class="copyright">
             COPYRIGHT © 2021 台北一日遊
         </div>
