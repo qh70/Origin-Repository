@@ -29,8 +29,6 @@
                         up_word.className="up_word";
                         up_word.innerHTML=attractions_data["data"][j]["name"]
                         div1.appendChild(up_word);
-                        // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
-                        // up_word.appendChild(textNode_up);
 
                         // down_word_zone
                         let down_word_zone=document.createElement("div");
@@ -60,11 +58,7 @@
                 let cHeight = document.documentElement.clientHeight;
                 let sHeight = document.documentElement.scrollHeight;
                 let sTop = document.documentElement.scrollTop;
-                // let search_tourist_name=document.getElementById("search_tourist_name");
                 if(sHeight == cHeight+ sTop) {
-                    // console.log(search_tourist_name_value)
-                    // console.log(nextPage)
-                    // console.log(btn_function)
 
                     // 沒有keyword
                     if(nextPage!=null&btn_function!="yes"){
@@ -88,8 +82,6 @@
                                     up_word.className="up_word";
                                     up_word.innerHTML=attractions_data["data"][j]["name"]
                                     div1.appendChild(up_word);
-                                    // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
-                                    // up_word.appendChild(textNode_up);
 
                                     // down_word_zone
                                     let down_word_zone=document.createElement("div");
@@ -107,7 +99,6 @@
                                     down_word_zone.appendChild(down_word_right);
                                 }
                             }
-                        // nextpage=attractions_data["data"]["nextPage"]
                             
                         }
                         req.send();
@@ -134,8 +125,6 @@
                                     up_word.className="up_word";
                                     up_word.innerHTML=attractions_data["data"][j]["name"]
                                     div1.appendChild(up_word);
-                                    // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
-                                    // up_word.appendChild(textNode_up);
 
                                     // down_word_zone
                                     let down_word_zone=document.createElement("div");
@@ -154,7 +143,6 @@
                                 }
                             }
                             keyword_nextPage=attractions_data["nextPage"]
-                        // nextpage=attractions_data["data"]["nextPage"]
                         }
                         req.send();
                     }
@@ -165,8 +153,9 @@
             search_tourist_name.addEventListener("keydown",function(e){
                 if(e.keyCode === 13){
                     console.log("yes");
+                    btn();
                 }
-            },false);
+            });
 
             function btn(){
                 search_tourist_name_value=document.getElementById("search_tourist_name").value;
@@ -195,8 +184,6 @@
                                 up_word.className="up_word";
                                 up_word.innerHTML=attractions_data["data"][j]["name"]
                                 div1.appendChild(up_word);
-                                // let textNode_up=document.createTextNode(attractions_data["data"][j]["name"]);
-                                // up_word.appendChild(textNode_up);
 
                                 // down_word_zone
                                 let down_word_zone=document.createElement("div");
@@ -221,101 +208,6 @@
                 req.send();                
             }
 
-            
-
-            
-
-            // let mydata;
-            // function getData(){
-            //     let req=new XMLHttpRequest();
-            //     req.open("get","https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment.json");
-            //     req.onload=function(){
-            //         mydata=this.responseText;
-            //         mydata=mydata.replace(/JPG/g, "jpg")
-            //         mydata=JSON.parse(mydata)   
-                                
-            //         for(let i=0;i<8;i++){
-            //             let div1=document.createElement("div");
-            //             div1.id="picline";
-            //             div1.className="picline1";
-            //             newDiv.appendChild(div1);
-            //             // img
-            //             let image=document.createElement("img");
-            //             image.className="first4pics"
-            //             image.src=mydata["result"]["results"][i]["file"].split("jpg")[0]+"jpg";
-            //             div1.appendChild(image);
-            //             // stitle
-            //             let word=document.createElement("div");
-            //             word.className="word";
-            //             div1.appendChild(word);
-            //             let textNode=document.createTextNode(mydata["result"]["results"][i]["stitle"]);
-            //             word.appendChild(textNode);
-            //     }
-            // }
-            // req.send();
-            
-            // }
-            // function getData(){
-            //     let req=new XMLHttpRequest();
-            //     for(let i=1;i<13;i++){
-            //         req.open("get","http://192.168.0.12:3000/api/attraction/"+i+"")
-            //         req.onload=function(){
-            //             let response_data=JSON.parse(this.responseText)
-            //             console.log(response_data["data"]["images"][0])
-            //         }
-            //         req.send();
-            //     }  
-            // }
-            
-
-            // function btN(){
-            // let btN=document.getElementById("btN")
-            // let handler=function (){
-            //     clicktime+=1;
-            //     return clicktime;
-            // }
-            // btN.addEventListener("click",handler)
-            // }
-            
-
-
-            // function btn(){
-            //     let req=new XMLHttpRequest();
-            //     req.open("get","https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment.json");
-            //     req.onload=function(){
-            //         clicktime+=1;
-            //         let k=8*clicktime;
-            //         for(let j=k;j<k+8;j++){
-            //             if(j<58){
-            //             let div1=document.createElement("div");
-            //             div1.id="picline";
-            //             div1.className="picline1";
-            //             newDiv.appendChild(div1);
-            //             // img
-            //             let image=document.createElement("img");
-            //             image.className="first4pics"
-            //             image.src=mydata["result"]["results"][j]["file"].split("jpg")[0]+"jpg";
-            //             div1.appendChild(image);
-            //             // stitle
-            //             let word=document.createElement("div");
-            //             word.className="word";
-            //             div1.appendChild(word);
-            //             let textNode=document.createTextNode(mydata["result"]["results"][j]["stitle"]);
-            //             word.appendChild(textNode);
-            //             }
-            //             else{
-            //                 let btNdis=document.getElementById("btNdis");
-            //                 btNdis.style.display="none";
-            //             };
-            //         };
-            //     };
-            //     req.send(); 
-            // };
-            
-
-
-
-            
         </script>
 
         <style type="text/css">    
@@ -443,13 +335,9 @@
     <body style="margin: 0px;" onload="getData()">
         <div class="empty_fixed_bar">
             <div class="navigation_bar">
-                <!-- <div style="display:flex;flex:auto;align-items: center;width:50%;background-color: blueviolet;"> -->
                 <div class="taipei_oneday_tourist">台北一日遊</div>
-                <!-- </div> -->
-                <!-- <div style="flex:auto;display:flex;align-items: center;justify-content: flex-end;width:50%;background-color: brown;"> -->
                 <span class="item1" id="item1">預定行程</span>
                 <span class="item2" id="item2">登入/註冊</span>
-                <!-- </div> -->
             </div> 
         </div>  
         <div class="empty_bar"></div>  
