@@ -9,19 +9,7 @@ app.config["TEMPLATES_AUTO_RELOAD"]=True
 
 import mysql.connector
 
-
-# 嘗試 connection pool 註解掉
-
-# mydb=mysql.connector.connect(
-#         host="localhost",
-#         user="jerry",
-#         password="12345678",
-#         database="tourist_data"
-#     )
-# my_cursor=mydb.cursor()
-
-
-# 嘗試 connection pool
+# connection pool
 from mysql.connector import Error, pooling
 pool=pooling.MySQLConnectionPool(
 	host="localhost",
@@ -50,7 +38,6 @@ def thankyou():
 
 @app.route("/api/attractions")
 def api_attractions():
-	# test
 	# 求資料長度
 	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
 	data_count=my_cursor.fetchone()[0] # 資料長度
@@ -158,9 +145,6 @@ def api_attractions():
 				# page 不在 4 之內
 				else:
 					return jsonify({"error": True,"message": "超過分頁"})
-			# 當 page 不是數字(設了新的限制 註解掉)
-			# else:
-			# 	return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
 	# 當 page 不是大於等於0的整數:
 	else:
 		return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
