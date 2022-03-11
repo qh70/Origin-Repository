@@ -3,13 +3,13 @@ import json
 from sre_constants import CATEGORY
 from unicodedata import category
 
-with open("F:/第二階段/Origin-Repository/data/taipei-attractions.json",mode="r",encoding="utf-8") as response:
+with open("taipei-attractions.json",mode="r",encoding="utf-8") as response:
     data=json.load(response)
 
 import mysql.connector
 mydb=mysql.connector.connect(
         host="localhost",
-        user="root",
+        user="jerry",
         password="12345678",
         database="tourist_data"
     )
@@ -18,7 +18,7 @@ my_cursor=mydb.cursor()
 for k in range(len(data["result"]["results"])):
     id=k+1
     name=data["result"]["results"][k]["stitle"]
-    category=data["result"]["results"][k]["CAT2"]
+    categories=data["result"]["results"][k]["CAT2"]
     description=data["result"]["results"][k]["xbody"]
     address=data["result"]["results"][k]["address"]
     transport=data["result"]["results"][k]["info"]
@@ -40,7 +40,7 @@ for k in range(len(data["result"]["results"])):
             cleaned_file.append(file[j])
     cleaned_file=" ".join(cleaned_file)
     images=cleaned_file
-    my_cursor.execute("INSERT INTO sub_data (id,name,category,description,address,transport,mrt,latitude,longitude,images) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",(id,name,categories,description,address,transport,mrt,latitude,longitude,images))
+    my_cursor.execute("INSERT INTO sub_data (id,name,category,description,address,transport,mrt,latitude,longitude,image) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",(id,name,categories,description,address,transport,mrt,latitude,longitude,images))
 mydb.commit()
 
 # 把整個網址分成個別網址

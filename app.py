@@ -1,16 +1,26 @@
 from flask import *
+from flask_cors import CORS
+
 app=Flask(__name__)
+CORS(app)
+
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 
 import mysql.connector
-mydb=mysql.connector.connect(
-        host="localhost",
-        user="jerry",
-        password="12345678",
-        database="tourist_data"
-    )
-my_cursor=mydb.cursor()
+
+# connection pool
+from mysql.connector import Error, pooling
+pool=pooling.MySQLConnectionPool(
+	host="localhost",
+	user="jerry",
+	password="12345678",
+	database="tourist_data",
+	pool_name="mypool",
+	pool_size=3,
+)
+db_connection_mydb=pool.get_connection()
+my_cursor=db_connection_mydb.cursor()
 
 # Pages
 @app.route("/")
@@ -46,7 +56,7 @@ def api_attractions():
 				nextPage=page+1
 			else: nextPage=None
 			page12=str(page*12)
-			my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",12")
+			my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",13")
 			keyword_result=my_cursor.fetchall()# 用 keyword 搜尋到的資料集合
 			# step 2-1. 搜尋到的資料集合有東西
 			if keyword_result != []:
@@ -69,7 +79,7 @@ def api_attractions():
 							"images": keyword_data_k_9
 						}
 						show_keyword0_to_full.append(keyword_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
+					return jsonify({"nextPage":None,"data":show_keyword0_to_full}) # 沒有nextPage
 				# 有到 12 筆
 				else:
 					for k in range(12):
@@ -88,81 +98,13 @@ def api_attractions():
 							"images": keyword_data_k_9
 						}
 						show_keyword0_to_full.append(keyword_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
+					if len(keyword_result)==12:
+						return jsonify({"nextPage":None,"data":show_keyword0_to_full})# 沒有nextPage
+					else:
+						return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full})
 			# step 2-1. 搜尋到的資料集合沒有東西
 			else:
 				return jsonify({"error": True,"message": "沒有此關鍵字的資料"})
-			'''
-			sql_keyword="SELECT `id` FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%'"
-			# 取得有 keyword 的 id
-			my_cursor.execute(sql_keyword)
-			keyword_result=my_cursor.fetchall() #step2. 把 keyword 放進資料庫搜尋 
-			# step2-1. 有搜尋到資料
-			# print(keyword_result)
-			if keyword_result != []:
-				for i in range(len(keyword_result)):
-					keyword_result[i]=keyword_result[i][0]
-
-				data_count_for_keyword=len(keyword_result)//12 # 每頁裝 12 筆，共有 (data_count_for_keyword)+1 頁
-				# 處理 nextPage
-				if page<data_count_for_keyword:
-					nextPage=page+1
-				else: nextPage=None
-				#======================
-				if page<=data_count_for_keyword: # stpe3-1. 頁數在規定內
-					show_keyword0_to_full=[] # 所有符合 keyword 的詳細資料
-					if page*12+12<=len(keyword_result):
-						for k in range(page*12,page*12+12):
-							# if keyword_result[k] != None:
-								keyword_parameter=keyword_result[k]
-								my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %keyword_parameter)
-								keyword_data=my_cursor.fetchone() # 每筆符合 keyword 的詳細資料
-								# if keyword_data != None:
-								keyword_data9=keyword_data[9].split(" ",-1)
-
-								keyword_show={
-									"id": keyword_data[0],
-									"name": keyword_data[1],
-									"category": keyword_data[2],
-									"description": keyword_data[3],
-									"address": keyword_data[4],
-									"transport": keyword_data[5],
-									"mrt": keyword_data[6],
-									"latitude": keyword_data[7],
-									"longitude": keyword_data[8],
-									"images": keyword_data9
-								}
-								show_keyword0_to_full.append(keyword_show.copy())
-						return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
-					else:
-						for k in range(page*12,len(keyword_result)):
-							# if keyword_result[k] != None:
-								keyword_parameter=keyword_result[k]
-								my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %keyword_parameter)
-								keyword_data=my_cursor.fetchone() # 每筆符合 keyword 的詳細資料
-								# if keyword_data != None:
-								keyword_data9=keyword_data[9].split(" ",-1)
-
-								keyword_show={
-									"id": keyword_data[0],
-									"name": keyword_data[1],
-									"category": keyword_data[2],
-									"description": keyword_data[3],
-									"address": keyword_data[4],
-									"transport": keyword_data[5],
-									"mrt": keyword_data[6],
-									"latitude": keyword_data[7],
-									"longitude": keyword_data[8],
-									"images": keyword_data9
-								}
-								show_keyword0_to_full.append(keyword_show.copy())
-						return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full}) # 尚未有nextPage
-				else: # stpe3-2. 頁數沒在規定內
-					return jsonify({"error": True,"message": "超過分頁"})
-			# step2-2. 沒有搜尋到資料
-			else:
-				return jsonify({"error": True,"message": "沒有此關鍵字的資料"})
-			'''
 		
 		# step1-2. 沒有 keyword，只有 page
 		else:
@@ -199,35 +141,10 @@ def api_attractions():
 							}
 							show_page0_to_full.append(page_show.copy())
 					return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
-					'''
-					for j in range(page*12,page*12+12):
-						j=j+1
-						my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %j)
-						page_data=my_cursor.fetchone()
-						if page_data != None:
-							page_data9=page_data[9].split(" ",-1)
-
-							page_show={
-								"id": page_data[0],
-								"name": page_data[1],
-								"category": page_data[2],
-								"description": page_data[3],
-								"address": page_data[4],
-								"transport": page_data[5],
-								"mrt": page_data[6],
-								"latitude": page_data[7],
-								"longitude": page_data[8],
-								"images": page_data9
-							}
-							show_page0_to_full.append(page_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
-					'''
+					
 				# page 不在 4 之內
 				else:
 					return jsonify({"error": True,"message": "超過分頁"})
-			# 當 page 不是數字(設了新的限制 註解掉)
-			# else:
-			# 	return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
 	# 當 page 不是大於等於0的整數:
 	else:
 		return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
@@ -250,7 +167,6 @@ def api_attraction_id(attractionId):
 			my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %attractionId)
 			page_data=my_cursor.fetchone()
 			page_data9=page_data[9].split(" ",-1)
-			print('123')
 
 			page_show={
 				"id": page_data[0],
