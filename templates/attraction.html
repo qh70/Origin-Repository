@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">    
+            /* noto sans tc 載入 */
+            @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+            body{font-family: 'Noto Sans TC';}
+
+            /* 頂層============================================================ */
+            .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;}
+            .navigation_bar{width: 1200px;height: 54px;background-color: white;
+                margin-left: auto;margin-right: auto;
+                display: flex;align-items: center;
+            }  
+            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
+            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;}
+            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;}
+            
+            .empty_bar{height: 54px;margin: 0px;}
+
+            /* 第二層============================================================ */
+            .second_bar_div{width: 1200px;height: 400px;margin-top: 40px;display: flex;margin-left: auto;margin-right: auto;}
+            .pic{width: 540px;height: 400px;margin-left: 15px;}
+            .second-2{width: 600px;height: 400px;margin-left: 30px;margin-right: 15px;background-color: yellow;}
+            .second-2-1{width: 600px;height: 33px;}
+            .second-2-2{width: 600px;height: 22px;margin-top: 15px;margin-bottom: 20px;}
+            .second-2-3{width: 600px;height: 302px;background-color: #E8E8E8;}
+            /* 第二層 灰色區域============================================================ */
+            .second-2-3-1{width: 560px;height: 22px;}
+            .second-2-3-2{width: 560px;height: 24px;}
+            .second-2-3-3{width: 560px;height: 35px;display: flex;}
+            .second-2-3-4{width: 560px;height: 22px;display: flex;}
+            .second-2-3-5{width: 560px;height: 22px;}
+            .second-2-3-6{width: 154px;height: 36px;background-color: #448899;line-height: 36px;text-align: center;}
+            .second-2-3-6-1{font-size: 16px;color: white;text-align: center;}
+        </style>
+
+    </head>
+    <body>
+        <!-- 頂層============================================================ -->
+        <div class="empty_fixed_bar">
+            <div class="navigation_bar">
+                <div class="taipei_oneday_tourist">台北一日遊</div>
+                <span class="item1" id="item1">預定行程</span>
+                <span class="item2" id="item2">登入/註冊</span>
+            </div> 
+            
+        </div> 
+
+        <!-- 第二層============================================================ -->
+        <div class="second_bar_div" style="background-color: green;">
+            <img class="pic" style="background-color: blue;">
+            <div class="second-2">
+                <div class="second-2-1">平安鐘</div>
+                <div class="second-2-2">公共藝術 at 忠孝復興</div>
+                <div class="second-2-3">
+                    <div class="second-2-3-1">訂購導覽行程</div>
+                    <div class="second-2-3-2">以此景點</div>
+                    <div class="second-2-3-3">選擇日期</div>
+                    <div class="second-2-3-4">選擇時間</div>
+                    <div class="second-2-3-5">導覽費用</div>
+                    <div class="second-2-3-6">
+                        <div class="second-2-3-6-1">開始預訂行程</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

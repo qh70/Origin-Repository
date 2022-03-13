@@ -148,15 +148,7 @@
                     }
                 }
             }
-
-            let search_tourist_name=document.getElementById("search_tourist_name")
-            search_tourist_name.addEventListener("keydown",function(e){
-                if(e.keyCode === 13){
-                    console.log("yes");
-                    btn();
-                }
-            });
-
+            
             function btn(){
                 search_tourist_name_value=document.getElementById("search_tourist_name").value;
                 newdiv.innerHTML=null;
@@ -164,7 +156,6 @@
                 req.open("get","http://54.236.231.32:3000/api/attractions?page=0&keyword="+search_tourist_name_value+"")
                 req.onload=function(){
                     attractions_data=JSON.parse(this.responseText)
-                    console.log(attractions_data)
                     if(attractions_data["message"]=="沒有此關鍵字的資料"){
                         newdiv.innerHTML="沒有此關鍵字的資料"
                     }
@@ -360,7 +351,15 @@
         <div class="copyright">
             COPYRIGHT © 2021 台北一日遊
         </div>
-        
+
+        <script type="text/javascript">
+            let search_tourist_name=document.getElementById("search_tourist_name")
+            search_tourist_name.addEventListener("keydown",function(e){
+                if(e.keyCode === 13){
+                    btn();
+                }
+            });
+        </script>
 
     </body>
 </html>
