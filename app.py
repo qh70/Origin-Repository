@@ -19,7 +19,8 @@ pool=pooling.MySQLConnectionPool(
 	pool_name="mypool",
 	pool_size=3,
 )
-
+db_connection_mydb=pool.get_connection()
+my_cursor=db_connection_mydb.cursor()
 
 # Pages
 @app.route("/")
@@ -37,9 +38,6 @@ def thankyou():
 
 @app.route("/api/attractions")
 def api_attractions():
-	db_connection_mydb=pool.get_connection()
-	my_cursor=db_connection_mydb.cursor()
-
 	# 求資料長度
 	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
 	data_count=my_cursor.fetchone()[0] # 資料長度
@@ -151,12 +149,8 @@ def api_attractions():
 	else:
 		return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
 
-	db_connection_mydb.close()
-
 @app.route("/api/attraction/<attractionId>")
 def api_attraction_id(attractionId):
-	db_connection_mydb=pool.get_connection()
-	my_cursor=db_connection_mydb.cursor()
 	# 求資料長度
 	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
 	data_count=my_cursor.fetchone()[0] # 資料長度
@@ -189,10 +183,7 @@ def api_attraction_id(attractionId):
 			return jsonify({"data":page_show})
 	else:
 		return jsonify({"error": True,"message": "請輸入正整數"})
-
-	db_connection_mydb.close()
-
-
+	
 
 
 
