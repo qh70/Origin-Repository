@@ -158,7 +158,7 @@
             body{font-family: 'Noto Sans TC';}
 
             /* 頂層============================================================ */
-            .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;}
+            .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;border-bottom: #e6e4e4 solid 1px;}
             .navigation_bar{width: 1200px;height: 54px;background-color: white;
                 margin-left: auto;margin-right: auto;
                 display: flex;align-items: center;
@@ -185,8 +185,8 @@
                     opacity: 0; 
                     }
                 /* dots_section */
-                .dots_section{margin-top: 360px;left: 50%;z-index: 9998;position: absolute;transform: translateX(-50%);}
-                
+                .dots_section{margin-top: 350px;left: 50%;z-index: 9998;position: absolute;transform: translateX(-50%);text-align: center;}
+                    .dots{margin: 2px;}
                 /* .slider--controls */
                 .slider--controls > a {
                     position: absolute;
@@ -214,13 +214,13 @@
             .category_at_mrt{width: 600px;height: 22px;margin-top: 15px;margin-bottom: 20px;}
             .second-2-3{width: 600px;height: 302px;margin-top: 20px;padding-top: 5px;background-color: #E8E8E8;box-sizing: border-box;border-radius: 5px;}
             /* 第二層 灰色區域============================================================ */
-            .second-2-3-1{width: 560px;height: 22px;font-size: 16px;font-weight: bold;color: #666666;margin-top: 15px;margin-left: 20px;}
-            .second-2-3-2{width: 560px;height: 24px;font-size: 16px;font-weight: 400;color: #666666;margin-top: 15px;margin-left: 20px;}
-            .second-2-3-3{width: 560px;height: 35px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;}
+            .second-2-3-1{width: 95%;height: 22px;font-size: 16px;font-weight: bold;color: #666666;margin-top: 15px;margin-left: 20px;}
+            .second-2-3-2{width: 95%;height: 24px;font-size: 16px;font-weight: 400;color: #666666;margin-top: 15px;margin-left: 20px;}
+            .second-2-3-3{width: 95%;height: 35px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;}
             .second-2-3-3-1{margin-top: 9px;margin-right: 5px;line-height: 13px;}
             .second-2-3-3-2{width: 193px;height: 35px;background-color: white;box-sizing: border-box;}
-            .second-2-3-4{width: 560px;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;line-height: 18px;}
-            .second-2-3-5{width: 560px;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;color: #666666;}
+            .second-2-3-4{width: 95%;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;line-height: 18px;}
+            .second-2-3-5{width: 95%;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;color: #666666;}
                 .cost{font-size: 16px;font-weight: 400;}
             .second-2-3-6{width: 154px;height: 36px;margin-top: 25px;margin-left: 20px;background-color: #448899;line-height: 36px;text-align: center;border-radius: 5px;}
             .second-2-3-6-1{font-size: 16px;color: white;text-align: center;}
@@ -228,20 +228,59 @@
             .hr{width: 1200px;color:#E8E8E8;margin-top: 37px;margin-left: auto;margin-right: auto;}
             /* 第三層============================================================ */
             .three{width: 1200px;height:  362px;margin-top: 40px;margin-left: auto;margin-right: auto;color:#666666}
-            .description{width: 1180px;margin: 10px;font-size: 16px;font-weight: 400;}
-            .address{width: 1180px;height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
-            .address_data{width: 1180px;height: 24px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
-            .transport{width: 1180px;height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
-            .transport_data{width: 1180px;height: 48px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
+            .description{width: 90%;margin: 10px;font-size: 16px;font-weight: 400;}
+            .address{width: 90%;height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
+            .address_data{width: 90%;height: 24px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
+            .transport{width: 90%;height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
+            .transport_data{width: 90%;height: 48px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
 
             /* 底層 */
             .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
 
-            
+            /* radio */
+            label.radio {
+                /* 保證佈局特性保持一致 */
+                margin: 3px 3px 0px 5px;
+                display: inline-block;
+                box-sizing: border-box;
 
+                width: 12px;
+                height: 12px;
+            }
+            .radio__appearance{
+                display: block; /* 設定為block則不受vertical-align影響，從而不會意外影響到.radio的linebox高度 */
+                position: relative;
+                background-color: white;
+                box-shadow: 0 0 0 1px white; /* box-shadow不像border那樣會影響盒子的框高 */
+                border-radius: 50%;
+                height: 90%;
+                width: 90%;
+                text-align: center;
+            }
+            label.radio [type=radio] + .radio__appearance::before{ /* 點了裡的圓框 */
+                content: "";
+                display: block;
+                border-radius: 50%;
+                width: 85%;
+                height: 85%;
+
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+                transition: background .3s;
+            }
+            label.radio [type=radio]:checked + .radio__appearance::before{
+                background: #448899;
+            }
+            label.radio input {
+               display: none;
+            }
+            /* ============================================================ */
             @keyframes showRight {
                 0% {
-                    left: 100%;
+                    left: 0; /* 100% */
                     opacity: 0;
                 }
                 100% {
@@ -256,14 +295,14 @@
                     opacity: 1;
                 }
                 100% {
-                    left: -100%;
+                    left: 0; /* 100% */
                     opacity: 0;
                 }
             }
 
             @keyframes showLeft {
                 0% {
-                    left: -100%;
+                    left: 0; /* 100% */
                     opacity: 0;
                 }
                 100% {
@@ -277,7 +316,7 @@
                     opacity: 1;
                 }
                 99%{
-                    left: 100%;
+                    left: 0; /* 100% */
                     opacity: 0;
                 }
                 100% {
@@ -289,13 +328,12 @@
             
             } */
             @media (max-width:1200px){
-                .navigation_bar{width:100%;height: 54px;position: fixed;top: 0;left: 0;right: 0;}
+                .navigation_bar{width:100%;height: 54px;}
                 .taipei_oneday_tourist{width: 150px; height: 34px;font-size: 30px;}
-                .item1{width: 64px;height: 14px;margin-right: 10px;font-size: 16px;}
-                .item2{width: 71px;height: 14px;margin-left: 10px;margin-right: 10px;font-size: 16px}
-
+                .item1{width: 64px;height: 14px;margin-right: 10px;padding: 15px;font-size: 16px;}
+                .item2{width: 71px;height: 14px;margin-right: 10px;font-size: 16px}
                 /* 第二層============================================================ */
-                .second_bar_div{width: 100%;height: 760px;margin-top: 40px;margin-left: 0px;margin-right: 0px;margin-bottom: 40px; display: block;}
+                .second_bar_div{width: 100%;height: 760px;margin-top: 40px;margin-left: 0px;margin-right: 0px;padding-right: 0px;margin-bottom: 40px; display: block;}
 
                 /* 照片 */
                 .slider{width: 100%;height: 350px;margin-left: 0px;margin-right: 0px;padding: 0px;position: relative;object-fit: cover;}
@@ -304,8 +342,8 @@
                 .dots_section{margin-top: 300px;left: 50%;z-index: 9998;position: absolute;transform: translateX(-50%);}
                 /* 第二層 照片以外 */
                 .second-2{width: 100%;height: 390px;margin-top: 20px;margin-left: 0px;margin-right: 0px;}
-                .name{height: 33px;margin-top: 0px;margin-left: 10px;color: #666666;font-size: 24px;font-weight: 700,bold;}
-                .category_at_mrt{width: 600px;height: 22px;margin-top: 15px;margin-left: 10px;margin-bottom: 20px;}
+                .name{width: 100%;height: 33px;margin-top: 0px;margin-left: 10px;color: #666666;font-size: 24px;font-weight: 700,bold;}
+                .category_at_mrt{width: 100%;height: 22px;margin-top: 15px;margin-left: 10px;margin-bottom: 20px;}
                 .second-2-3{width: 100%;height: 340px;margin-top: 20px;margin-bottom: 40px;margin-left: 10px;margin-right: 10px;padding-top: 5px;background-color: #E8E8E8;box-sizing: border-box;border-radius: 5px;}
                 /* 第二層 灰色區域============================================================ */
                 .second-2-3-1{height: 22px;font-size: 16px;font-weight: bold;color: #666666;margin-top: 15px;margin-left: 20px;}
@@ -319,14 +357,14 @@
                 .second-2-3-6{width: 154px;height: 36px;margin-top: 25px;margin-left: 20px;background-color: #448899;line-height: 36px;text-align: center;border-radius: 5px;}
                 .second-2-3-6-1{font-size: 16px;color: white;text-align: center;}
 
-                .hr{width:90%;margin-top: 80px;margin-left: auto;margin-right: auto;}
+                .hr{width: 100%;margin-top: 80px;margin-left: 10px;margin-right: 10px;}
                 /* 第三層============================================================ */
                 .three{width: 100%;height: 742px;margin-top: 40px;margin-left: 0px;color:#666666}
-                .description{height: 336px; margin: 10px;font-size: 16px;font-weight: 400;word-break: break-all; word-wrap: break-word;}
+                .description{width: 100%;;margin: 10px;font-size: 16px;font-weight: 400;word-break: break-all; word-wrap: break-word;}
                 .address{height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
                 .address_data{height: 24px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
                 .transport{height: 32px;margin-top: 20px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight:bold;}
-                .transport_data{height: 48px;margin-top: 0px;margin-left: 10px;margin-right: 10px;font-size: 16px;font-weight: 400;}
+                .transport_data{width: 100%;height: 48px;margin: 10px;margin-top: 0px;font-size: 16px;font-weight: 400;}
 
                 /* 底層 */
                 .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
@@ -372,8 +410,10 @@
                     </div>
                     <div class="second-2-3-4">選擇時間：
                         <!-- <input type="radio"  id="radio1"  name="radio"  checked="checked"/><label for="radio1">選項一</label> -->
-                        <input type="radio" class="morning" id="morning" name="MorA" onclick="morning_fun()" value="morning"><label for="morning" style="font-weight: 400;line-height: 18px;">上半天</label>
-                        <input type="radio" id="afternoon" name="MorA" onclick="afternoon_fun()" value="afternoon"><label for="afternoon" style="font-weight: 400;line-height: 18px;">下半天</label>
+                        <!-- <input type="radio" id="morning" name="MorA" onclick="morning_fun()" value="morning"><label for="morning" style="font-weight: 400;line-height: 18px;">上半天</label>
+                        <input type="radio" id="afternoon" name="MorA" onclick="afternoon_fun()" value="afternoon"><label for="afternoon" style="font-weight: 400;line-height: 18px;">下半天</label> -->
+                        <label class="radio" for="morning" style="font-weight: 400;line-height: 18px;"><input type="radio" id="morning" name="MorA" onclick="morning_fun()" value="morning"><i class="radio__appearance"></i></label><span style="font-weight: 400;line-height: 18px;">上半天</span>
+                        <label class="radio" for="afternoon" style="font-weight: 400;line-height: 18px;"><input type="radio" id="afternoon" name="MorA" onclick="afternoon_fun()" value="afternoon"><i class="radio__appearance"></i></label><span style="font-weight: 400;line-height: 18px;">下半天</span>
                     </div>
                     <div class="second-2-3-5">導覽費用：<span class="cost" id="cost"> （請選擇時間） </span></div>
                     <div class="second-2-3-6">
@@ -386,11 +426,11 @@
         <hr class="hr">
         <!-- 第三層============================================================ -->
         <div class="three" id="three">
-            <box class="description" id="description"></box>
+            <div class="description" id="description"></div>
             <div class="address">景點地址：</div>
             <div class="address_data" id="address_data"></div>
             <div class="transport">交通方式：</div>
-            <box class="transport_data" id="transport_data"></box>
+            <div class="transport_data" id="transport_data"></div>
         </div>
         <!-- footer============================================================ -->
         <div class="copyright">
