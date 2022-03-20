@@ -184,7 +184,7 @@ def api_attraction_id(attractionId):
 					return jsonify({"error": True,"message": "景點編號太小"})
 				else:
 					my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %attractionId)
-					page_data=result
+					page_data=my_cursor.fetchone()
 					page_data9=page_data[9].split(" ",-1)
 
 					page_show={
