@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
+        <title>台北市景點列表</title>
+        <script type="text/javascript">
+            // 檢查登入狀態
+            function init(){
+                let req=new XMLHttpRequest();
+                req.open("get","http://54.236.231.32:3000/api/user");
+                req.onload=function(){
+                    console.log(JSON.parse(this.responseText)["data"])
+                    if(JSON.parse(this.responseText)["data"]!=null){
+                        let item2=document.getElementById("item2");
+                        item2.style.display="none";
+                        let logout=document.getElementById("logout");
+                        logout.style.display="block";
+                    }
+                    else{
+                        let item2=document.getElementById("item2");
+                        item2.style.display="block";
+                        let logout=document.getElementById("logout");
+                        logout.style.display="none";
+                    }
+                };
+                req.send();
+            }
+            
+            // 按下登入鍵
+            function show_login_area(){
+                let overlay_login=document.getElementById("overlay_login");
+                overlay_login.style.display="block";
+            }
+            function close_login(){
+                let overlay_login=document.getElementById("overlay_login");
+                overlay_login.style.display="none";
+            }
+            // 按下註冊鍵
+            function show_signup_area(){
+                let overlay_signup=document.getElementById("overlay_signup");
+                overlay_signup.style.display="block";
+                let signup_failed=document.getElementById("signup_failed");
+                signup_failed.style.display="none";
+                let signup_succeed=document.getElementById("signup_succeed");
+                signup_succeed.style.display="none";
+            }
+            function close_signup(){
+                let overlay_signup=document.getElementById("overlay_signup");
+                overlay_signup.style.display="none";
+            }
+            // 還沒有帳戶？點此註冊
+            function signup_after_popup(){
+                let overlay_login=document.getElementById("overlay_login");
+                overlay_login.style.display="none"
+                let overlay_signup=document.getElementById("overlay_signup");
+                overlay_signup.style.display="block";
+            }
+            // 已經有帳戶了？點此登入
+            function login_after_popup(){
+                let overlay_signup=document.getElementById("overlay_signup");
+                overlay_signup.style.display="none";
+                let overlay_login=document.getElementById("overlay_login");
+                overlay_login.style.display="block";
+            }
+
+            // 登入會員
+            function login(){
+                let req=new XMLHttpRequest();
+                req.open("PATCH","http://54.236.231.32:3000/api/user");
+                req.setRequestHeader("Content-type", "application/json");
+                req.onload=function(){
+                    // 登入成功
+                    if(JSON.parse(this.responseText)["ok"]==true){
+                        window.location="http://54.236.231.32:3000/booking";
+                        // let overlay_login=document.getElementById("overlay_login");
+                        // overlay_login.style.display="none";
+                        // let item2=document.getElementById("item2");
+                        // item2.style.display="none";
+                        // let logout=document.getElementById("logout");
+                        // logout.style.display="block";
+                    }
+                    // 密碼錯誤
+                    else if(JSON.parse(this.responseText)["message"]=="密碼錯誤"){
+                        let login_failed=document.getElementById("login_failed");
+                        login_failed.innerHTML="密碼錯誤";
+                        login_failed.style.display="block";
+                    }
+                    // 此Email 未註冊帳號
+                    else if(JSON.parse(this.responseText)["message"]=="此Email 未註冊帳號"){
+                        let login_failed=document.getElementById("login_failed");
+                        login_failed.innerHTML="此Email 未註冊帳號";
+                        login_failed.style.display="block";
+                    }
+                }
+                let email_login=document.getElementById("email_login");
+                let password_login=document.getElementById("password_login");
+                req.send(
+                    JSON.stringify({
+                        "email_login":email_login.value,
+                        "password_login":password_login.value
+                    })
+                );
+            }
+
+            // 註冊會員
+            function signup(){
+                let req=new XMLHttpRequest();
+                req.open("POST","http://54.236.231.32:3000/api/user");
+                req.setRequestHeader("Content-type", "application/json");
+                req.onload=function(){
+                    if(JSON.parse(this.responseText)["error"]===true){
+                        console.log(this.responseText);
+                        let signup_succeed=document.getElementById("signup_succeed");
+                        signup_succeed.style.display="none";
+                        let signup_failed=document.getElementById("signup_failed");
+                        signup_failed.style.display="block";
+                    }else if(JSON.parse(this.responseText)["ok"]===true){
+                        console.log(this.responseText);
+                        let signup_failed=document.getElementById("signup_failed");
+                        signup_failed.style.display="none";
+                        let signup_succeed=document.getElementById("signup_succeed");
+                        signup_succeed.style.display="block";
+                    }
+
+                }
+                let name_signup=document.getElementById("name_signup");
+                let email_signup=document.getElementById("email_signup");
+                let password_signup=document.getElementById("password_signup");
+                req.send(
+                    JSON.stringify({
+                        "name_signup":name_signup.value,
+                        "email_signup":email_signup.value,
+                        "password_signup":password_signup.value
+                    })
+                )
+            }
+            // 登出會員
+            function logout(){
+                let req=new XMLHttpRequest();
+                req.open("DELETE","http://54.236.231.32:3000/api/user")
+                req.onload=function(){
+                    window.location="http://54.236.231.32:3000/booking";
+                    // let item2=document.getElementById("item2");
+                    // item2.style.display="block";
+                    // let logout=document.getElementById("logout");
+                    // logout.style.display="none";
+                }
+                req.send();
+            }
+        </script>
+
+        <style type="text/css">    
+            /* noto sans tc 載入 */
+            @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+            body{font-family: 'Noto Sans TC';}
+
+            /* 初始化 */ 
+            *{box-sizing: border-box;}
+            ol, ul, menu{list-style: none;}
+
+            /* 頂層============================================================ */
+            .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;border-bottom: #e6e4e4 solid 1px;}
+            .navigation_bar{width: 1200px;height: 54px;background-color: white;
+                margin-left: auto;margin-right: auto;
+                display: flex;align-items: center;
+                border-bottom: #e6e4e4 solid 1px;
+            }  
+            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
+            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;}
+            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;}
+            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;}
+            
+            .empty_bar{height: 54px;margin: 0px;}
+            /* 第二層============================================================ */
+            .schedule{width: 1000px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .welcome{font-size: 19px;font-weight: bold;}
+            .second-2{margin-top: 35px;margin-left: 8px;display: flex;}
+            .pic{width: 266px;}
+            .second-2-3{margin-left: 22px;}
+            .icon_delete{width: 30px;height: 30px;margin-top: 0px;margin-bottom: auto;margin-left: auto;margin-right: 0px;}
+            /* 第三層============================================================ */
+            .three{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .contact{font-size: 19px;font-weight: bold;}
+            .plz_check{font-size: 16px;font-weight: bold;}
+            /* 第四層============================================================ */
+            .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .cc_info{font-size: 19px;font-weight: bold;}
+            /* 第五層============================================================ */
+            .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
+            .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
+            /* 底層 */
+            .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
+            /* 登入彈出視窗============================================================ */  
+            .overlay_login{width: 100%;height: 100%;display: none;position: fixed;z-index: 9999;top: 0;left: 0;background: rgb(0,0,0,0.7);}
+            .login_block{
+                width: 340px;
+                position: fixed;top: 80px;left: 50%;transform: translate(-170px,0px);
+                border-radius: 6px;background-color: white;                
+            }
+            .login_top{width: 340px;height: 10px;
+                background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+                border-top-left-radius: 6px;border-top-right-radius: 6px;
+            }
+            .login_title_area{width: 310px;height: 27px;margin-top: 15px;margin-left: auto;margin-right: auto;display: flex;}
+            .login_title{margin-left: auto;margin-right: auto;font-size: 24px;font-weight: bold;text-align: center;}
+            .icon_close{width: 16px;height: 16px;top: 0px;right: 0px;cursor: pointer;}
+            .type_email{width: 310px;height: 47px;margin-top: 15px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            .type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            .login_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
+            #login_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
+            .not_yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
+
+            /* 註冊彈出視窗 */
+            .overlay_signup{width: 100%;height: 100%;display: none;position: fixed;z-index: 9999;top: 0;left: 0;background: rgb(0,0,0,0.7);}
+            .signup_block{
+                width: 340px;
+                position: fixed;top: 80px;left: 50%;transform: translate(-170px,0px);
+                border-radius: 6px;background-color: white;                
+            }
+            .signup_top{width: 340px;height: 10px;
+                background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+                border-top-left-radius: 6px;border-top-right-radius: 6px;
+            }
+            .signup_title_area{width: 310px;height: 27px;margin-top: 15px;margin-left: auto;margin-right: auto;display: flex;}
+            .signup_title{margin-left: auto;margin-right: auto;font-size: 24px;font-weight: bold;text-align: center;}
+            .icon_close{width: 16px;height: 16px;top: 0px;right: 0px;cursor: pointer;}
+            .signup_type_name{width: 310px;height: 47px;margin-top: 15px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            .signup_type_email{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            .signup_type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
+            #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
+            #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
+            .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
+            @media (max-width:1200px){
+                /* 頂層============================================================ */
+                .empty_fixed_bar{width: 100%;}
+                .navigation_bar{width: 100%}
+                /* 第二層============================================================ */
+                .schedule{width: 100%}
+                /* 第三層============================================================ */
+                .three{width: 95%}
+                /* 第四層============================================================ */
+                .four{width: 95%}
+                /* 第五層============================================================ */
+                .five{width: 95%}
+            }
+            @media (max-width:600px){
+                /* 頂層============================================================ */
+                .empty_fixed_bar{width: 100%;}
+                .navigation_bar{width: 100%}
+                /* 第二層============================================================ */
+                .schedule{width: 100%}
+                /* 第三層============================================================ */
+                .three{width: 95%}
+                /* 第四層============================================================ */
+                .four{width: 95%}
+                /* 第五層============================================================ */
+                .five{width: 95%}
+            }
+        </style>
+    </head>
+    <body style="margin: 0px;" onload="init()">
+        <!-- 頂層============================================================ -->
+        <div class="empty_fixed_bar">
+            <div class="navigation_bar">
+                <div class="taipei_oneday_tourist">台北一日遊</div>
+                <span class="item1" id="item1">預定行程</span>
+                <span class="item2" id="item2">
+                    <span onclick="show_login_area()">登入</span>/<span onclick="show_signup_area()">註冊</span>
+                </span>
+                <span class="logout" id="logout" onclick="logout()">登出系統</span>
+            </div> 
+        </div>  
+        <div class="empty_bar"></div>
+        <!-- 第二層============================================================ -->
+        <div class="schedule">
+            <div class="welcome">您好，Yakko，待預訂的行程如下：</div>
+            <div class="second-2">
+                <img class="pic">
+                <div class="second-2-3">
+                    <div style="color:#448899">台北一日遊：平安鐘</div>
+                    <div>日期：</div>
+                    <div>時間：</div>
+                    <div>費用：</div>
+                    <div>地點：</div>
+                </div>
+                <img class="icon_delete" src="/static/icon_delete.png">
+            </div>
+        </div>
+
+        <hr style="margin-top: 40px;">
+        <!-- 第三層============================================================ -->
+        <div class="three">
+            <div class="contact">您的聯絡資訊</div>
+            <div>聯絡姓名：</div>
+            <div>連絡信箱：</div>
+            <div>手機號碼：</div>
+            <div class="plz_check">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
+        </div>
+
+        <hr style="margin-top: 40px;">
+        <!-- 第四層============================================================ -->
+        <div class="four">
+            <div class="cc_info">信用哪付款資訊</div>
+            <div>卡片號碼：</div>
+            <div>過期時間：</div>
+            <div>驗證密碼：</div>
+        </div>
+
+        <hr style="margin-top: 40px;">
+        <!-- 第五層============================================================ -->
+        <div class="five">
+            <div>總價：</div>
+            <div class="check_pay">確認訂購並付款</div>
+        </div>
+        <!-- 底層============================================================ -->
+        <div class="copyright">
+            COPYRIGHT © 2021 台北一日遊
+        </div>
+        <!-- 登入彈出視窗============================================================ -->
+        <div class="overlay_login" id="overlay_login">
+            <div class="login_block" id="login_block">
+                <div class="login_top"></div>
+                <div class="login_title_area">
+                    <div class="login_title">登入會員帳號</div>
+                    <img class="icon_close" src="../static/icon_close.png" onclick="close_login()">
+                </div>
+                <input class="type_email" id="email_login" type="text" placeholder="輸入電子信箱">
+                <input class="type_password" id="password_login" type="password" placeholder="輸入密碼">
+                <div class="login_btn" onclick="login()">登入帳戶</div>
+
+                <div id="login_failed" style="display:none"></div>
+
+                <div class="not_yet_account" onclick="signup_after_popup()">還沒有帳戶？點此註冊</div>
+            </div>
+        </div>
+        <!-- 註冊彈出視窗 -->
+        <div class="overlay_signup" id="overlay_signup">
+            <div class="signup_block" id="signup_block">
+                <div class="signup_top"></div>
+                <div class="signup_title_area">
+                    <div class="signup_title">註冊會員帳號</div>
+                    <img class="icon_close" src="../static/icon_close.png" onclick="close_signup()">
+                </div>
+                <input class="signup_type_name" type="text" id="name_signup" placeholder="輸入姓名">
+                <input class="signup_type_email" type="text" id="email_signup" placeholder="輸入電子信箱">
+                <input class="signup_type_password" type="password" id="password_signup" placeholder="輸入密碼">
+                <div class="signup_btn" onclick="signup()">註冊新帳戶</div>
+
+                <div id="signup_failed" style="display:none">Email 已經註冊帳戶</div>
+                <div id="signup_succeed" style="display:none">註冊成功</div>
+                
+                <div class="yet_account" onclick = "login_after_popup()">已經有帳戶了？點此登入</div>
+            </div>
+        </div>
+    </body>
+</html>
