@@ -1,5 +1,6 @@
 from flask import *
 from flask_cors import CORS
+from flask import session
 
 app=Flask(__name__)
 CORS(app)
@@ -22,6 +23,8 @@ pool=pooling.MySQLConnectionPool(
 db_connection_mydb=pool.get_connection()
 my_cursor=db_connection_mydb.cursor()
 
+app.secret_key="any string but secret" # 設定 Session 的密鑰
+
 # Pages
 @app.route("/")
 def index():
@@ -38,152 +41,248 @@ def thankyou():
 
 @app.route("/api/attractions")
 def api_attractions():
-	# 求資料長度
-	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
-	data_count=my_cursor.fetchone()[0] # 資料長度
-	data_count_for_page=data_count//12 # 每頁裝 12 筆，共有 (data_count_for_page)+1 頁
+	try:
+		db_connection_mydb=pool.get_connection()
+		my_cursor=db_connection_mydb.cursor()
+		my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
+		result=my_cursor.fetchone()
+		if result != None:
+			# 求資料長度
+			data_count=result[0] # 資料長度
+			data_count_for_page=data_count//12 # 每頁裝 12 筆，共有 (data_count_for_page)+1 頁
 
-	# 兩個變數 page 和 keyword
-	keyword=request.args.get("keyword")
-	page_str=request.args.get("page")
+			# 兩個變數 page 和 keyword
+			keyword=request.args.get("keyword")
+			page_str=request.args.get("page")
 
-	# 當 page 是大於等於0的整數:
-	if page_str.isnumeric():
-		page=int(page_str)
-		# step1-1. 有 keyword
-		if keyword!=None:
-			if page<data_count_for_page:
-				nextPage=page+1
-			else: nextPage=None
-			page12=str(page*12)
-			my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",13")
-			keyword_result=my_cursor.fetchall()# 用 keyword 搜尋到的資料集合
-			# step 2-1. 搜尋到的資料集合有東西
-			if keyword_result != []:
-				# 如果不到 12 筆
-				show_keyword0_to_full=[]
-				if len(keyword_result)<12:
-					for k in range(len(keyword_result)):
-						keyword_data_k_9=keyword_result[k][9].split(" ",-1)
-
-						keyword_show={
-							"id": keyword_result[k][0],
-							"name": keyword_result[k][1],
-							"category": keyword_result[k][2],
-							"description": keyword_result[k][3],
-							"address": keyword_result[k][4],
-							"transport": keyword_result[k][5],
-							"mrt": keyword_result[k][6],
-							"latitude": keyword_result[k][7],
-							"longitude": keyword_result[k][8],
-							"images": keyword_data_k_9
-						}
-						show_keyword0_to_full.append(keyword_show.copy())
-					return jsonify({"nextPage":None,"data":show_keyword0_to_full}) # 沒有nextPage
-				# 有到 12 筆
-				else:
-					for k in range(12):
-						keyword_data_k_9=keyword_result[k][9].split(" ",-1)
-
-						keyword_show={
-							"id": keyword_result[k][0],
-							"name": keyword_result[k][1],
-							"category": keyword_result[k][2],
-							"description": keyword_result[k][3],
-							"address": keyword_result[k][4],
-							"transport": keyword_result[k][5],
-							"mrt": keyword_result[k][6],
-							"latitude": keyword_result[k][7],
-							"longitude": keyword_result[k][8],
-							"images": keyword_data_k_9
-						}
-						show_keyword0_to_full.append(keyword_show.copy())
-					if len(keyword_result)==12:
-						return jsonify({"nextPage":None,"data":show_keyword0_to_full})# 沒有nextPage
-					else:
-						return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full})
-			# step 2-1. 搜尋到的資料集合沒有東西
-			else:
-				return jsonify({"error": True,"message": "沒有此關鍵字的資料"})
-		
-		# step1-2. 沒有 keyword，只有 page
-		else:
-			# 當 page 是數字
-			page_is_N=page_str.isnumeric()
-			if page_is_N:
-				# page 在 4 之內
-				if page<=data_count_for_page:
-					# 處理 nextPage
+			# 當 page 是大於等於0的整數:
+			if page_str.isnumeric():
+				page=int(page_str)
+				# step1-1. 有 keyword
+				if keyword!=None:
 					if page<data_count_for_page:
 						nextPage=page+1
 					else: nextPage=None
-
-					# 用page把資料抓下來
 					page12=str(page*12)
-					my_cursor.execute("SELECT * FROM `sub_data` LIMIT "+page12+",12")
-					page_data=my_cursor.fetchall()
-					show_page0_to_full=[] # 所有符合 page 的資料
-					for j in range(12):
-						if j+1<=len(page_data):
-							page_data_j_9=page_data[j][9].split(" ",-1)
+					my_cursor.execute("SELECT * FROM `sub_data` WHERE `name` LIKE '%"+keyword+"%' LIMIT "+page12+",13")
+					keyword_result=my_cursor.fetchall()# 用 keyword 搜尋到的資料集合
+					# step 2-1. 搜尋到的資料集合有東西
+					if keyword_result != []:
+						# 如果不到 12 筆
+						show_keyword0_to_full=[]
+						if len(keyword_result)<12:
+							for k in range(len(keyword_result)):
+								keyword_data_k_9=keyword_result[k][9].split(" ",-1)
 
-							page_show={
-								"id": page_data[j][0],
-								"name": page_data[j][1],
-								"category": page_data[j][2],
-								"description": page_data[j][3],
-								"address": page_data[j][4],
-								"transport": page_data[j][5],
-								"mrt": page_data[j][6],
-								"latitude": page_data[j][7],
-								"longitude": page_data[j][8],
-								"images": page_data_j_9
-							}
-							show_page0_to_full.append(page_show.copy())
-					return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
-					
-				# page 不在 4 之內
+								keyword_show={
+									"id": keyword_result[k][0],
+									"name": keyword_result[k][1],
+									"category": keyword_result[k][2],
+									"description": keyword_result[k][3],
+									"address": keyword_result[k][4],
+									"transport": keyword_result[k][5],
+									"mrt": keyword_result[k][6],
+									"latitude": keyword_result[k][7],
+									"longitude": keyword_result[k][8],
+									"images": keyword_data_k_9
+								}
+								show_keyword0_to_full.append(keyword_show.copy())
+							return jsonify({"nextPage":None,"data":show_keyword0_to_full}) # 沒有nextPage
+						# 有到 12 筆
+						else:
+							for k in range(12):
+								keyword_data_k_9=keyword_result[k][9].split(" ",-1)
+
+								keyword_show={
+									"id": keyword_result[k][0],
+									"name": keyword_result[k][1],
+									"category": keyword_result[k][2],
+									"description": keyword_result[k][3],
+									"address": keyword_result[k][4],
+									"transport": keyword_result[k][5],
+									"mrt": keyword_result[k][6],
+									"latitude": keyword_result[k][7],
+									"longitude": keyword_result[k][8],
+									"images": keyword_data_k_9
+								}
+								show_keyword0_to_full.append(keyword_show.copy())
+							if len(keyword_result)==12:
+								return jsonify({"nextPage":None,"data":show_keyword0_to_full})# 沒有nextPage
+							else:
+								return jsonify({"nextPage":nextPage,"data":show_keyword0_to_full})
+					# step 2-1. 搜尋到的資料集合沒有東西
+					else:
+						return jsonify({"error": True,"message": "沒有此關鍵字的資料"})
+				
+				# step1-2. 沒有 keyword，只有 page
 				else:
-					return jsonify({"error": True,"message": "超過分頁"})
-	# 當 page 不是大於等於0的整數:
-	else:
-		return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
+					# 當 page 是數字
+					page_is_N=page_str.isnumeric()
+					if page_is_N:
+						# page 在 4 之內
+						if page<=data_count_for_page:
+							# 處理 nextPage
+							if page<data_count_for_page:
+								nextPage=page+1
+							else: nextPage=None
+
+							# 用page把資料抓下來
+							page12=str(page*12)
+							my_cursor.execute("SELECT * FROM `sub_data` LIMIT "+page12+",12")
+							page_data=my_cursor.fetchall()
+							show_page0_to_full=[] # 所有符合 page 的資料
+							for j in range(12):
+								if j+1<=len(page_data):
+									page_data_j_9=page_data[j][9].split(" ",-1)
+
+									page_show={
+										"id": page_data[j][0],
+										"name": page_data[j][1],
+										"category": page_data[j][2],
+										"description": page_data[j][3],
+										"address": page_data[j][4],
+										"transport": page_data[j][5],
+										"mrt": page_data[j][6],
+										"latitude": page_data[j][7],
+										"longitude": page_data[j][8],
+										"images": page_data_j_9
+									}
+									show_page0_to_full.append(page_show.copy())
+							return jsonify({"nextPage":nextPage,"data":show_page0_to_full})
+							
+						# page 不在 4 之內
+						else:
+							return jsonify({"error": True,"message": "超過分頁"})
+			# 當 page 不是大於等於0的整數:
+			else:
+				return jsonify({"error": True,"message": "請輸入大於等於 0 的整數"})
+		else:
+			return jsonify({"error":True}), 400
+	except:
+		return jsonify({"error":True}), 500
+	finally:
+		db_connection_mydb.close()
 
 @app.route("/api/attraction/<attractionId>")
 def api_attraction_id(attractionId):
-	# 求資料長度
-	my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
-	data_count=my_cursor.fetchone()[0] # 資料長度
+	try:
+		db_connection_mydb=pool.get_connection()
+		my_cursor=db_connection_mydb.cursor()
+		my_cursor.execute("SELECT COUNT(*) FROM `sub_data`")
 
-	# 當 attractionId 是數字
-	attractionid_is_N=attractionId.isnumeric()
-	if attractionid_is_N:
-		attractionId=int(attractionId)
-		if attractionId>data_count:
-			return jsonify({"error": True,"message": "景點編號太大"})
-		elif attractionId<1:
-			return jsonify({"error": True,"message": "景點編號太小"})
+		result=my_cursor.fetchone()
+		if result!=None:
+			# 求資料長度
+			data_count=result[0] # 資料長度
+
+			# 當 attractionId 是數字
+			attractionid_is_N=attractionId.isnumeric()
+			if attractionid_is_N:
+				attractionId=int(attractionId)
+				if attractionId>data_count:
+					return jsonify({"error": True,"message": "景點編號太大"})
+				elif attractionId<1:
+					return jsonify({"error": True,"message": "景點編號太小"})
+				else:
+					my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %attractionId)
+					page_data=my_cursor.fetchone()
+					page_data9=page_data[9].split(" ",-1)
+
+					page_show={
+						"id": page_data[0],
+						"name": page_data[1],
+						"category": page_data[2],
+						"description": page_data[3],
+						"address": page_data[4],
+						"transport": page_data[5],
+						"mrt": page_data[6],
+						"latitude": page_data[7],
+						"longitude": page_data[8],
+						"images": page_data9
+					}
+					return jsonify({"data":page_show})
+			else:
+				return jsonify({"error": True,"message": "請輸入正整數"})
 		else:
-			my_cursor.execute("SELECT * FROM `sub_data` WHERE `id`=%s" %attractionId)
-			page_data=my_cursor.fetchone()
-			page_data9=page_data[9].split(" ",-1)
+			return jsonify({"error":True}), 400
+	except:
+		return jsonify({"error":True}), 500
+	finally:
+		db_connection_mydb.close()
 
-			page_show={
-				"id": page_data[0],
-				"name": page_data[1],
-				"category": page_data[2],
-				"description": page_data[3],
-				"address": page_data[4],
-				"transport": page_data[5],
-				"mrt": page_data[6],
-				"latitude": page_data[7],
-				"longitude": page_data[8],
-				"images": page_data9
-			}
-			return jsonify({"data":page_show})
+@app.route("/api/user")
+def api_user_get():
+	if session["email"]!="logout" or None:
+		try:
+			db_connection_mydb=pool.get_connection()
+			my_cursor=db_connection_mydb.cursor()
+			my_cursor.execute("SELECT `id`,`name` FROM `user` WHERE email='%s'" %session["email"])
+			result=my_cursor.fetchone()
+			return jsonify({
+				"data":{
+					"id":result[0],
+					"name":result[1],
+					"email":session["email"]
+				}
+			})
+		except:
+			return jsonify({"error":True}), 500
+		finally:
+			db_connection_mydb.close()
 	else:
-		return jsonify({"error": True,"message": "請輸入正整數"})
+		return jsonify({"data":None})
 	
+@app.route("/api/user", methods=["POST",])
+def api_user():
+	name_signup=request.json["name_signup"]
+	email_signup=request.json["email_signup"]
+	password_signup=request.json["password_signup"]
+	try:
+		db_connection_mydb=pool.get_connection()
+		my_cursor=db_connection_mydb.cursor()
+		my_cursor.execute("SELECT `name`,`email`,`password` FROM `user` WHERE email='%s'" %email_signup)
+		result=my_cursor.fetchone()
+		if result!=None:
+			return jsonify({"error":True,"message":"Email 已經被註冊"})
+		else:
+			my_cursor.execute("INSERT INTO user (name, email, password) VALUES (%s, %s, %s);", (name_signup, email_signup, password_signup))
+			db_connection_mydb.commit()
+			return jsonify({"ok":True}), 200
+	except:
+		return jsonify({"error":True}), 500
+	finally:
+		db_connection_mydb.close()
+
+@app.route("/api/user", methods=["PATCH"])
+def api_user_patch():
+	email_login=request.json["email_login"]
+	password_login=request.json["password_login"]
+	try:
+		db_connection_mydb=pool.get_connection()
+		my_cursor=db_connection_mydb.cursor()
+		my_cursor.execute("SELECT `name`,`email`,`password` FROM `user` WHERE email='%s'" %email_login)
+		result=my_cursor.fetchone()
+		if result!=None:
+			# 登入成功
+			if password_login==result[2]:
+				session["email"]=result[1]
+				return jsonify({"ok":True}), 200
+			# 密碼錯誤
+			else:
+				return jsonify({"error":True,"message":"密碼錯誤"}), 400
+		# 此Email 未註冊帳號
+		else:
+			return jsonify({"error":True,"message":"此Email 未註冊帳號"}), 400
+	except:
+		return jsonify({"error":True}), 500
+	finally:
+		db_connection_mydb.close()
+
+@app.route("/api/user", methods=["DELETE"])
+def api_user_delete():
+	session["email"]="logout"
+	return jsonify({"ok":True}), 200
+
 
 
 
