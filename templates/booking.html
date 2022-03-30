@@ -5,6 +5,13 @@
         <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
         <title>台北市景點列表</title>
         <script type="text/javascript">
+            // 讓所有 hr 標籤消失的 function
+            function hr_change(){
+                let hrs=document.getElementsByTagName("hr");
+                for (let i=0;i<hrs.length;i++){
+                    hrs[i].style.display="none";
+                }
+            }
             
             // 檢查登入狀態
             function init(){
@@ -45,15 +52,9 @@
                         three.style.display="none";
                         four.style.display="none";
                         five.style.display="none";
-                        
-                        let hr1=document.getElementById("hr1");
-                        let hr2=document.getElementById("hr2");
-                        let hr3=document.getElementById("hr3");
-                        hr1.style.display="none";
-                        hr2.style.display="none";
-                        hr3.style.display="none";
-                        // console.log(hr);
-                        // document.body.hr.style.display="none";
+                        // 讓所有 hr 標籤消失
+                        hr_change();
+
                         nobook_nologin.style.display="block";
                         nobook_nologin.innerHTML="目前沒有任何的預訂行程";
 
@@ -76,14 +77,9 @@
                         three.style.display="none";
                         four.style.display="none";
                         five.style.display="none";
-                        // console.log(hr)
-                        // hr.style.display="none";
-                        let hr1=document.getElementById("hr1");
-                        let hr2=document.getElementById("hr2");
-                        let hr3=document.getElementById("hr3");
-                        hr1.style.display="none";
-                        hr2.style.display="none";
-                        hr3.style.display="none";
+
+                        // 讓所有 hr 標籤消失
+                        hr_change();
 
                         nobook_nologin.style.display="block";
                         nobook_nologin.innerHTML="尚未登入";
@@ -279,14 +275,14 @@
             /* 第三層============================================================ */
             .three{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .contact{font-size: 19px;font-weight: bold;}
-            .name_info{margin: 1rem;margin-left: 0px;}
-            .email_info{margin: 1rem;margin-left: 0px;}
-            .phone_info{margin: 1rem;margin-left: 0px;}
-            .plz_check{font-size: 16px;font-weight: bold;}
+            .name_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
+            .email_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
+            .phone_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
+            .plz_check{margin-top: 20px;font-size: 16px;font-weight: bold;}
             /* 第四層============================================================ */
             .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .cc_info{font-size: 19px;font-weight: bold;}
-            .four>div{margin: 1rem;margin-left: 0px;}
+            .four>div{margin-top: 24px;margin-left: 0px;}
             /* 第五層============================================================ */
             .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
             .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
@@ -333,7 +329,8 @@
             #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
             #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
             .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
-            hr{width: 1200px;}
+            hr{width: 1200px;border: 1px solid #f1f0f0;}
+            input{width: 200px;height: 38px;padding-left: 10px;}
             
             @media (max-width:1200px){
                 /* 頂層============================================================ */
@@ -376,7 +373,7 @@
         <!-- 頂層============================================================ -->
         <div class="empty_fixed_bar">
             <div class="navigation_bar">
-                <div class="taipei_oneday_tourist">台北一日遊</div>
+                <div class="taipei_oneday_tourist" onclick="location.href='/'">台北一日遊</div>
                 <span class="item1" id="item1" onclick="booking_btn()">預定行程</span>
                 <span class="item2" id="item2">
                     <span onclick="show_login_area()">登入</span>/<span onclick="show_signup_area()">註冊</span>
@@ -414,7 +411,7 @@
             }
         </script>
 
-        <hr style="margin-top: 40px;" id="hr1">
+        <hr style="margin-top: 40px;">
         <!-- 第三層============================================================ -->
         <div class="three">
             <h3 class="contact">您的聯絡資訊</h3>
@@ -424,7 +421,7 @@
             <h4 class="plz_check">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</h4>
         </div>
 
-        <hr style="margin-top: 40px;" id="hr2">
+        <hr style="margin-top: 40px;">
         <!-- 第四層============================================================ -->
         <div class="four">
             <h3 class="cc_info">信用卡付款資訊</h3>
@@ -433,7 +430,7 @@
             <div>驗證密碼：<input></div>
         </div>
 
-        <hr style="margin-top: 40px;" id="hr3">
+        <hr style="margin-top: 40px;">
         <!-- 第五層============================================================ -->
         <div class="five">
             <div>總價：</div>
