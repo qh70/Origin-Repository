@@ -213,25 +213,28 @@ def api_attraction_id(attractionId):
 
 # @app.route("/api/user")
 # def api_user_get():
-# 	if session["email"]!="logout" or None:
-# 		try:
-# 			db_connection_mydb=pool.get_connection()
-# 			my_cursor=db_connection_mydb.cursor()
-# 			my_cursor.execute("SELECT `id`,`name` FROM `user` WHERE email='%s'" %session["email"])
-# 			result=my_cursor.fetchone()
-# 			return jsonify({
-# 				"data":{
-# 					"id":result[0],
-# 					"name":result[1],
-# 					"email":session["email"]
-# 				}
-# 			})
-# 		except:
-# 			return jsonify({"error":True}), 500
-# 		finally:
-# 			db_connection_mydb.close()
-# 	else:
-# 		return jsonify({"data":None})
+	# if session!={}:
+	# 	if session["email"]!="logout":
+	# 		try:
+	# 			db_connection_mydb=pool.get_connection()
+	# 			my_cursor=db_connection_mydb.cursor()
+	# 			my_cursor.execute("SELECT `id`,`name` FROM `user` WHERE email='%s'" %session["email"])
+	# 			result=my_cursor.fetchone()
+	# 			return jsonify({
+	# 				"data":{
+	# 					"id":result[0],
+	# 					"name":result[1],
+	# 					"email":session["email"]
+	# 				}
+	# 			})
+	# 		except:
+	# 			return jsonify({"error":True}), 500
+	# 		finally:
+	# 			db_connection_mydb.close()
+	# 	else:
+	# 		return jsonify({"data":None})
+	# else:
+	# 	return jsonify({"data":None})
 	
 # @app.route("/api/user", methods=["POST",])
 # def api_user():
@@ -290,75 +293,84 @@ app.register_blueprint(api_User)
 
 @app.route("/api/booking", methods=["POST"])
 def api_booking_post():
-	if session["email"]!="logout" or None:
-		attractionId=request.json["attractionId"]
-		date=request.json["date"]
-		time=request.json["time"]
-		price=request.json["price"]
-		if attractionId.isdigit() and (time=="上半天" or "下半天") and (price=="2500" or "2000"):
+	if session!={}:
+		if session["email"]!="logout":
+			attractionId=request.json["attractionId"]
+			date=request.json["date"]
+			time=request.json["time"]
+			price=request.json["price"]
+			if attractionId.isdigit() and (time=="上半天" or "下半天") and (price=="2500" or "2000"):
+				try:
+					db_connection_mydb=pool.get_connection()
+					my_cursor=db_connection_mydb.cursor()
+					my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
+					my_cursor.execute("UPDATE `user` SET `attractionId`='"+attractionId+"',`date`='"+date+"',`time`='"+time+"',`price`='"+price+"' WHERE `email`='"+session["email"]+"'")
+					db_connection_mydb.commit()
+					return jsonify({"ok":True}), 200
+				except:
+					return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
+				finally:
+					db_connection_mydb.close()
+			else:
+				return jsonify({"error":True,"message":"錯誤的資料"}), 400
+		else:
+			return jsonify({"error":True,"message":"未登入"}), 403
+	else:
+			return jsonify({"error":True,"message":"未登入"}), 403
+		
+@app.route("/api/booking")
+def api_booking_get():
+	print(session=={})
+	if session!={}:
+		if session["email"]!="logout":
 			try:
 				db_connection_mydb=pool.get_connection()
 				my_cursor=db_connection_mydb.cursor()
-				my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
-				my_cursor.execute("UPDATE `user` SET `attractionId`='"+attractionId+"',`date`='"+date+"',`time`='"+time+"',`price`='"+price+"' WHERE `email`='"+session["email"]+"'")
+				my_cursor.execute("SELECT `date`,`time`,`price`,`attractionId` FROM `user` WHERE `email`='"+session["email"]+"'")
+				result_user=my_cursor.fetchone()
+				my_cursor.execute("SELECT `name`,`address`,`image` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
+				result_data=my_cursor.fetchone()
+				if result_data==None:
+					return jsonify({"data":None})
+				return jsonify({
+					"data": {
+						"attraction": {
+							"id":result_user[3],
+							"name":result_data[0],
+							"address":result_data[1],
+							"image":result_data[2]
+						},
+						"date":result_user[0],
+						"time":result_user[1],
+						"price":result_user[2]
+					}
+				})
+			except:
+				return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
+			finally:
+					db_connection_mydb.close()
+		else:
+			return jsonify({"error":True,"message":"未登入"}), 403
+	else:
+		return jsonify({"error":True,"message":"未登入"}), 403
+@app.route("/api/booking", methods=["DELETE"])
+def api_booking_delete():
+	if session!={}:
+		if session["email"]!="logout":
+			try:
+				db_connection_mydb=pool.get_connection()
+				my_cursor=db_connection_mydb.cursor()
+				my_cursor.execute("UPDATE `user` SET `date`=NULL,`time`=NULL,`price`=NULL,`attractionId`=NULL WHERE `email`='"+session["email"]+"'")
 				db_connection_mydb.commit()
-				return jsonify({"ok":True}), 200
+				return jsonify({"ok":True})
 			except:
 				return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
 			finally:
 				db_connection_mydb.close()
 		else:
-			return jsonify({"error":True,"message":"錯誤的資料"}), 400
+			return jsonify({"error":True,"message":"未登入"}), 403
 	else:
-		return jsonify({"error":True,"message":"未登入"}), 403
-		
-@app.route("/api/booking")
-def api_booking_get():
-	if session["email"]!="logout" or None:
-		try:
-			db_connection_mydb=pool.get_connection()
-			my_cursor=db_connection_mydb.cursor()
-			my_cursor.execute("SELECT `date`,`time`,`price`,`attractionId` FROM `user` WHERE `email`='"+session["email"]+"'")
-			result_user=my_cursor.fetchone()
-			my_cursor.execute("SELECT `name`,`address`,`image` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
-			result_data=my_cursor.fetchone()
-			if result_data==None:
-				return jsonify({"data":None})
-			return jsonify({
-				"data": {
-					"attraction": {
-						"id":result_user[3],
-						"name":result_data[0],
-						"address":result_data[1],
-						"image":result_data[2]
-					},
-					"date":result_user[0],
-					"time":result_user[1],
-					"price":result_user[2]
-				}
-			})
-		except:
-			return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
-		finally:
-				db_connection_mydb.close()
-	else:
-		return jsonify({"error":True,"message":"未登入"}), 403
-
-@app.route("/api/booking", methods=["DELETE"])
-def api_booking_delete():
-	if session["email"]!="logout" or None:
-		try:
-			db_connection_mydb=pool.get_connection()
-			my_cursor=db_connection_mydb.cursor()
-			my_cursor.execute("UPDATE `user` SET `date`=NULL,`time`=NULL,`price`=NULL,`attractionId`=NULL WHERE `email`='"+session["email"]+"'")
-			db_connection_mydb.commit()
-			return jsonify({"ok":True})
-		except:
-			return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
-		finally:
-			db_connection_mydb.close()
-	else:
-		return jsonify({"error":True,"message":"未登入"}), 403
+			return jsonify({"error":True,"message":"未登入"}), 403
 
 
 app.run(host="0.0.0.0",port=3000)

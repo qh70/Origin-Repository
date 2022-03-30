@@ -19,23 +19,26 @@ pool=pooling.MySQLConnectionPool(
 
 @api_User.route("/api/user")
 def api_user_get():
-	if session["email"]!="logout" or None:
-		try:
-			db_connection_mydb=pool.get_connection()
-			my_cursor=db_connection_mydb.cursor()
-			my_cursor.execute("SELECT `id`,`name` FROM `user` WHERE email='%s'" %session["email"])
-			result=my_cursor.fetchone()
-			return jsonify({
-				"data":{
-					"id":result[0],
-					"name":result[1],
-					"email":session["email"]
-				}
-			})
-		except:
-			return jsonify({"error":True}), 500
-		finally:
-			db_connection_mydb.close()
+	if session!={}:
+		if session["email"]!="logout":
+			try:
+				db_connection_mydb=pool.get_connection()
+				my_cursor=db_connection_mydb.cursor()
+				my_cursor.execute("SELECT `id`,`name` FROM `user` WHERE email='%s'" %session["email"])
+				result=my_cursor.fetchone()
+				return jsonify({
+					"data":{
+						"id":result[0],
+						"name":result[1],
+						"email":session["email"]
+					}
+				})
+			except:
+				return jsonify({"error":True}), 500
+			finally:
+				db_connection_mydb.close()
+		else:
+			return jsonify({"data":None})
 	else:
 		return jsonify({"data":None})
 	
