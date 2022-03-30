@@ -5,26 +5,117 @@
         <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
         <title>台北市景點列表</title>
         <script type="text/javascript">
+            
             // 檢查登入狀態
             function init(){
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/user");
+                req.open("get","/api/user");
                 req.onload=function(){
-                    console.log(JSON.parse(this.responseText)["data"])
+                    // console.log(JSON.parse(this.responseText)["data"])
                     if(JSON.parse(this.responseText)["data"]!=null){
                         let item2=document.getElementById("item2");
                         item2.style.display="none";
                         let logout=document.getElementById("logout");
                         logout.style.display="block";
+                        let member_name=document.getElementById("member_name");
+                        member_name.innerHTML=JSON.parse(this.responseText)["data"]["name"];                        
                     }
                     else{
-                        let item2=document.getElementById("item2");
-                        item2.style.display="block";
-                        let logout=document.getElementById("logout");
-                        logout.style.display="none";
+                        window.location="/"
                     }
                 };
                 req.send();
+                
+                // 到 /api/booking取資料 
+                let req2=new XMLHttpRequest();
+                req2.open("get","/api/booking");
+                req2.onload=function(){
+                    console.log(JSON.parse(this.responseText));
+                    let booking_data=JSON.parse(this.responseText);
+
+                    // 若沒有預訂行程
+                    if(booking_data["data"]==null){
+                        let second_2=document.querySelector(".second-2");
+                        let three=document.querySelector(".three");
+                        let four=document.querySelector(".four");
+                        let five=document.querySelector(".five");
+                        // let hr=document.getElementsByTagName("hr")
+                        let nobook_nologin=document.querySelector(".nobook_nologin")
+                        second_2.style.display="none";
+                        three.style.display="none";
+                        four.style.display="none";
+                        five.style.display="none";
+                        
+                        let hr1=document.getElementById("hr1");
+                        let hr2=document.getElementById("hr2");
+                        let hr3=document.getElementById("hr3");
+                        hr1.style.display="none";
+                        hr2.style.display="none";
+                        hr3.style.display="none";
+                        // console.log(hr);
+                        // document.body.hr.style.display="none";
+                        nobook_nologin.style.display="block";
+                        nobook_nologin.innerHTML="目前沒有任何的預訂行程";
+
+                        // 嘗試讓 copyright 剛好高度 失敗
+                        let cHeight = document.documentElement.clientHeight;
+                        // let firstHeight=document.querySelector(".empty_fixed_bar")
+                        // firstHeight=firstHeight.documentElement.offsetHeight;
+                        // let scheduleHeight=document.querySelector(".schedule").documentElement.offsetHeight;
+                        // document.body.style.height=cHeight-firstHeight-scheduleHeight;
+                        document.body.style.height="100vh";
+                    }else if(booking_data["error"]==true){
+                        // 若沒有登入
+                        let second_2=document.querySelector(".second-2");
+                        let three=document.querySelector(".three");
+                        let four=document.querySelector(".four");
+                        let five=document.querySelector(".five");
+                        // let hr=document.querySelectorAll("hr")
+                        let nobook_nologin=document.querySelector(".nobook_nologin")
+                        second_2.style.display="none";
+                        three.style.display="none";
+                        four.style.display="none";
+                        five.style.display="none";
+                        // console.log(hr)
+                        // hr.style.display="none";
+                        let hr1=document.getElementById("hr1");
+                        let hr2=document.getElementById("hr2");
+                        let hr3=document.getElementById("hr3");
+                        hr1.style.display="none";
+                        hr2.style.display="none";
+                        hr3.style.display="none";
+
+                        nobook_nologin.style.display="block";
+                        nobook_nologin.innerHTML="尚未登入";
+                        document.body.style.height="100vh";
+                    }else{
+                        // 若有預訂行程
+                        let pic=document.querySelector(".pic");
+                        let name=document.querySelector("#name");
+                        let date=document.querySelector("#date");
+                        let time=document.querySelector("#time");
+                        let price=document.querySelector("#price");
+                        let address=document.querySelector("#address");
+                        // console.log(booking_data["data"]["attraction"]["image"].split(" ")[0])
+                        pic.src=booking_data["data"]["attraction"]["image"].split(" ")[0];
+                        name.innerHTML=booking_data["data"]["attraction"]["name"];
+                        date.innerHTML=booking_data["data"]["date"];
+                        time.innerHTML=booking_data["data"]["time"];
+                        price.innerHTML=booking_data["data"]["price"];
+                        address.innerHTML=booking_data["data"]["attraction"]["address"];
+                    }
+                }
+                req2.send();
+            }
+
+            // 按下預訂行程按鈕
+            function booking_btn(){
+                let item2=document.getElementById("item2");
+                if(item2.style.display=="block"){
+                    console.log("y")
+                    show_login_area();
+                }
+                else{window.location="/booking"}
             }
             
             // 按下登入鍵
@@ -67,12 +158,12 @@
             // 登入會員
             function login(){
                 let req=new XMLHttpRequest();
-                req.open("PATCH","http://54.236.231.32:3000/api/user");
+                req.open("PATCH","/api/user");
                 req.setRequestHeader("Content-type", "application/json");
                 req.onload=function(){
                     // 登入成功
                     if(JSON.parse(this.responseText)["ok"]==true){
-                        window.location="http://54.236.231.32:3000/booking";
+                        window.location="/booking";
                         // let overlay_login=document.getElementById("overlay_login");
                         // overlay_login.style.display="none";
                         // let item2=document.getElementById("item2");
@@ -106,7 +197,7 @@
             // 註冊會員
             function signup(){
                 let req=new XMLHttpRequest();
-                req.open("POST","http://54.236.231.32:3000/api/user");
+                req.open("POST","/api/user");
                 req.setRequestHeader("Content-type", "application/json");
                 req.onload=function(){
                     if(JSON.parse(this.responseText)["error"]===true){
@@ -138,9 +229,9 @@
             // 登出會員
             function logout(){
                 let req=new XMLHttpRequest();
-                req.open("DELETE","http://54.236.231.32:3000/api/user")
+                req.open("DELETE","/api/user")
                 req.onload=function(){
-                    window.location="http://54.236.231.32:3000/booking";
+                    window.location="/booking";
                     // let item2=document.getElementById("item2");
                     // item2.style.display="block";
                     // let logout=document.getElementById("logout");
@@ -167,30 +258,40 @@
                 border-bottom: #e6e4e4 solid 1px;
             }  
             .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
-            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;}
-            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;}
-            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;}
+            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;cursor: pointer;}
+            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
+            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
             
             .empty_bar{height: 54px;margin: 0px;}
             /* 第二層============================================================ */
             .schedule{width: 1000px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .welcome{font-size: 19px;font-weight: bold;}
+            .nobook_nologin{margin-top: 50px;font-size: 16px;display: none;}
             .second-2{margin-top: 35px;margin-left: 8px;display: flex;}
-            .pic{width: 266px;}
+            .pic{width: 266px;height: 200px;object-fit: cover;}
             .second-2-3{margin-left: 22px;}
+            .taipei_oneday{height: 14px;font-weight: bold;color:#448899}
+            .date{height: 14px;margin-top: 30px;font-size: bold;}
+            .time{height: 14px;margin-top: 20px;font-size: bold;}
+            .price{height: 14px;margin-top: 20px;font-size: bold;}
+            .address{height: 14px;margin-top: 20px;font-size: bold;}
             .icon_delete{width: 30px;height: 30px;margin-top: 0px;margin-bottom: auto;margin-left: auto;margin-right: 0px;}
             /* 第三層============================================================ */
             .three{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .contact{font-size: 19px;font-weight: bold;}
+            .name_info{margin: 1rem;margin-left: 0px;}
+            .email_info{margin: 1rem;margin-left: 0px;}
+            .phone_info{margin: 1rem;margin-left: 0px;}
             .plz_check{font-size: 16px;font-weight: bold;}
             /* 第四層============================================================ */
             .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .cc_info{font-size: 19px;font-weight: bold;}
+            .four>div{margin: 1rem;margin-left: 0px;}
             /* 第五層============================================================ */
             .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
             .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
             /* 底層 */
-            .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
+            .copyright{height: 100%;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;margin-bottom: 0px;}
             /* 登入彈出視窗============================================================ */  
             .overlay_login{width: 100%;height: 100%;display: none;position: fixed;z-index: 9999;top: 0;left: 0;background: rgb(0,0,0,0.7);}
             .login_block{
@@ -232,18 +333,22 @@
             #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
             #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
             .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
+            hr{width: 1200px;}
+            
             @media (max-width:1200px){
                 /* 頂層============================================================ */
                 .empty_fixed_bar{width: 100%;}
                 .navigation_bar{width: 100%}
                 /* 第二層============================================================ */
-                .schedule{width: 100%}
+                .schedule{width: 95%;}
                 /* 第三層============================================================ */
                 .three{width: 95%}
                 /* 第四層============================================================ */
                 .four{width: 95%}
                 /* 第五層============================================================ */
                 .five{width: 95%}
+
+                hr{width: 95%;}
             }
             @media (max-width:600px){
                 /* 頂層============================================================ */
@@ -251,21 +356,28 @@
                 .navigation_bar{width: 100%}
                 /* 第二層============================================================ */
                 .schedule{width: 100%}
+                .welcome{margin-left: 10px;}
+                .second-2{margin-top: 0px;margin-left: 0px;display: block;text-align: center;}
+                .pic{width: 95%;object-fit: cover;margin-top: 25px;margin-left: auto;margin-right: auto;}
+                .second-2-3{text-align: left;}
+                .icon_delete{margin-top:15px;margin-left: 85%;}
                 /* 第三層============================================================ */
                 .three{width: 95%}
                 /* 第四層============================================================ */
                 .four{width: 95%}
                 /* 第五層============================================================ */
                 .five{width: 95%}
+
+                hr{width: 95%;}
             }
         </style>
     </head>
-    <body style="margin: 0px;" onload="init()">
+    <body style="height: 100%;margin: 0px;" onload="init()">
         <!-- 頂層============================================================ -->
         <div class="empty_fixed_bar">
             <div class="navigation_bar">
                 <div class="taipei_oneday_tourist">台北一日遊</div>
-                <span class="item1" id="item1">預定行程</span>
+                <span class="item1" id="item1" onclick="booking_btn()">預定行程</span>
                 <span class="item2" id="item2">
                     <span onclick="show_login_area()">登入</span>/<span onclick="show_signup_area()">註冊</span>
                 </span>
@@ -275,40 +387,53 @@
         <div class="empty_bar"></div>
         <!-- 第二層============================================================ -->
         <div class="schedule">
-            <div class="welcome">您好，Yakko，待預訂的行程如下：</div>
+            <div class="welcome">您好，<span id="member_name"></span>，待預訂的行程如下：</div>
+            <div class="nobook_nologin"></div>
             <div class="second-2">
                 <img class="pic">
                 <div class="second-2-3">
-                    <div style="color:#448899">台北一日遊：平安鐘</div>
-                    <div>日期：</div>
-                    <div>時間：</div>
-                    <div>費用：</div>
-                    <div>地點：</div>
+                    <div class="taipei_oneday">台北一日遊：<span id="name"></span></div>
+                    <div class="date">日期：<span id="date" style="font-weight: 300;"></span></div>
+                    <div class="time">時間：<span id="time" style="font-weight: 300;"></span></div>
+                    <div class="price">費用：<span id="price" style="font-weight: 300;"></span></div>
+                    <div class="address">地點：<span id="address" style="font-weight: 300;"></span></div>
                 </div>
-                <img class="icon_delete" src="/static/icon_delete.png">
+                <img class="icon_delete" src="/static/icon_delete.png" onclick="delete_pic()">
             </div>
         </div>
+        <script type="text/javascript">
+            function delete_pic(){
+                let req=new XMLHttpRequest();
+                req.open("delete","/api/booking");
+                req.onload=function(){
+                    if(JSON.parse(this.responseText)["ok"]==true){
+                        window.location="/booking";
+                    }
+                }
+                req.send();
+            }
+        </script>
 
-        <hr style="margin-top: 40px;">
+        <hr style="margin-top: 40px;" id="hr1">
         <!-- 第三層============================================================ -->
         <div class="three">
-            <div class="contact">您的聯絡資訊</div>
-            <div>聯絡姓名：</div>
-            <div>連絡信箱：</div>
-            <div>手機號碼：</div>
-            <div class="plz_check">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
+            <h3 class="contact">您的聯絡資訊</h3>
+            <div class="name_info">聯絡姓名：<input></div>
+            <div class="email_info">連絡信箱：<input></div>
+            <div class="phone_info">手機號碼：<input></div>
+            <h4 class="plz_check">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</h4>
         </div>
 
-        <hr style="margin-top: 40px;">
+        <hr style="margin-top: 40px;" id="hr2">
         <!-- 第四層============================================================ -->
         <div class="four">
-            <div class="cc_info">信用哪付款資訊</div>
-            <div>卡片號碼：</div>
-            <div>過期時間：</div>
-            <div>驗證密碼：</div>
+            <h3 class="cc_info">信用卡付款資訊</h3>
+            <div>卡片號碼：<input></div>
+            <div>過期時間：<input></div>
+            <div>驗證密碼：<input></div>
         </div>
 
-        <hr style="margin-top: 40px;">
+        <hr style="margin-top: 40px;" id="hr3">
         <!-- 第五層============================================================ -->
         <div class="five">
             <div>總價：</div>
@@ -326,7 +451,7 @@
                     <div class="login_title">登入會員帳號</div>
                     <img class="icon_close" src="../static/icon_close.png" onclick="close_login()">
                 </div>
-                <input class="type_email" id="email_login" type="text" placeholder="輸入電子信箱">
+                <input class="type_email" id="email_login" type="email" placeholder="輸入電子信箱">
                 <input class="type_password" id="password_login" type="password" placeholder="輸入密碼">
                 <div class="login_btn" onclick="login()">登入帳戶</div>
 
@@ -344,7 +469,7 @@
                     <img class="icon_close" src="../static/icon_close.png" onclick="close_signup()">
                 </div>
                 <input class="signup_type_name" type="text" id="name_signup" placeholder="輸入姓名">
-                <input class="signup_type_email" type="text" id="email_signup" placeholder="輸入電子信箱">
+                <input class="signup_type_email" type="email" id="email_signup" placeholder="輸入電子信箱">
                 <input class="signup_type_password" type="password" id="password_signup" placeholder="輸入密碼">
                 <div class="signup_btn" onclick="signup()">註冊新帳戶</div>
 
