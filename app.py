@@ -1,7 +1,7 @@
 from flask import *
 from flask_cors import CORS
 from flask import session
-from numpy import NaN
+
 
 app=Flask(__name__)
 CORS(app)
