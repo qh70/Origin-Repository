@@ -16,9 +16,9 @@
             // 檢查登入狀態
             function init(){
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/user");
+                req.open("get","/api/user");
                 req.onload=function(){
-                    console.log(JSON.parse(this.responseText)["data"])
+                    // console.log(JSON.parse(this.responseText)["data"])
                     if(JSON.parse(this.responseText)["data"]!=null){
                         let item2=document.getElementById("item2");
                         item2.style.display="none";
@@ -38,7 +38,7 @@
             // 載入資訊
             function getData(){
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/attraction/"+pathname.split("/").pop()+"")
+                req.open("get","/api/attraction/"+pathname.split("/").pop()+"")
                 req.onload=function(){
                     attraction_data=JSON.parse(this.responseText);
 
@@ -52,6 +52,7 @@
                         pics.className="slider--item";
                         pics.src=attraction_data["data"]["images"][i];
                         sliderContent.appendChild(pics)
+
                         let dots_section=document.getElementById("dots_section")
                         if(i===0){
                             let dots=document.createElement("img");
@@ -144,6 +145,16 @@
                 }
             }
             // ============================================================
+
+            // 按下預訂行程按鈕
+            function booking_btn(){
+                let item2=document.getElementById("item2");
+                if(item2.style.display=="block"){
+                    console.log("y")
+                    show_login_area();
+                }
+                else{window.location="/booking"}
+            }
             
             // 按下登入鍵
             function show_login_area(){
@@ -185,12 +196,12 @@
             // 登入會員
             function login(){
                 let req=new XMLHttpRequest();
-                req.open("PATCH","http://54.236.231.32:3000/api/user");
+                req.open("PATCH","/api/user");
                 req.setRequestHeader("Content-type", "application/json");
                 req.onload=function(){
                     // 登入成功
                     if(JSON.parse(this.responseText)["ok"]==true){
-                        window.location="http://54.236.231.32:3000/attraction/"+pathname.split("/").pop()+"";
+                        window.location="/attraction/"+pathname.split("/").pop()+"";
                         // let overlay_login=document.getElementById("overlay_login");
                         // overlay_login.style.display="none";
                         // let item2=document.getElementById("item2");
@@ -224,7 +235,7 @@
             // 註冊會員
             function signup(){
                 let req=new XMLHttpRequest();
-                req.open("POST","http://54.236.231.32:3000/api/user");
+                req.open("POST","/api/user");
                 req.setRequestHeader("Content-type", "application/json");
                 req.onload=function(){
                     if(JSON.parse(this.responseText)["error"]===true){
@@ -256,9 +267,9 @@
             // 登出會員
             function logout(){
                 let req=new XMLHttpRequest();
-                req.open("DELETE","http://54.236.231.32:3000/api/user")
+                req.open("DELETE","/api/user")
                 req.onload=function(){
-                    window.location="http://54.236.231.32:3000/attraction/"+pathname.split("/").pop()+"";
+                    window.location="/attraction/"+pathname.split("/").pop()+"";
                     // let item2=document.getElementById("item2");
                     // item2.style.display="block";
                     // let logout=document.getElementById("logout");
@@ -280,9 +291,9 @@
                 display: flex;align-items: center;
             }  
             .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
-            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;}
-            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;}
-            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;}
+            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;cursor: pointer;}
+            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
+            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
             
             .empty_bar{height: 54px;margin: 0px;}
 
@@ -326,7 +337,7 @@
                     opacity: 60%;
                     }
             
-            
+            #sliderContent{object-fit: cover;}
             /* 第二層 照片以外 */
             .second-2{width: 600px;height: 400px;margin-left: 30px;margin-right: 15px;}
             .name{width: 600px;height: 33px;margin-top: 0px;color: #666666;font-size: 24px;font-weight: 700,bold;}
@@ -342,10 +353,11 @@
             .second-2-3-4{width: 95%;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;line-height: 18px;}
             .second-2-3-5{width: 95%;height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;color: #666666;}
                 .cost{font-size: 16px;font-weight: 400;}
-            .second-2-3-6{width: 154px;height: 36px;margin-top: 25px;margin-left: 20px;background-color: #448899;line-height: 36px;text-align: center;border-radius: 5px;}
-            .second-2-3-6-1{font-size: 16px;color: white;text-align: center;}
+            .second-2-3-6{height: 36px;display: flex;}
+            .second-2-3-6-1{width: 154px;height: 36px;line-height: 34px;margin-top: 25px;margin-left: 20px;background-color: #448899;text-align: center;border-radius: 5px;font-size: 16px;color: white;text-align: center;}
+            .plz_date_time{height: 36px;line-height: 33px;margin-top: 25px;margin-left: 15px;font-size: 16px;display: none;color: red;}
 
-            .hr{width: 1200px;color:#E8E8E8;margin-top: 37px;margin-left: auto;margin-right: auto;}
+            .hr{width: 1200px;border: 1px solid #f1f0f0;margin-top: 37px;margin-left: auto;margin-right: auto;}
             /* 第三層============================================================ */
             .three{width: 1200px;margin-top: 40px;margin-left: auto;margin-right: auto;color:#666666;}
             .description{margin: 10px;font-size: 16px;font-weight: 400;}
@@ -515,9 +527,12 @@
                 .second-2-3-4{height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;display: flex;color: #666666;line-height: 18px;}
                 .second-2-3-5{height: 22px;margin-top: 15px;font-weight: bold;margin-left: 20px;color: #666666;}
                     .cost{font-size: 16px;font-weight: 400;}
-                .second-2-3-6{width: 154px;height: 36px;margin-top: 25px;margin-left: 20px;background-color: #448899;line-height: 36px;text-align: center;border-radius: 5px;}
-                .second-2-3-6-1{font-size: 16px;color: white;text-align: center;}
-
+                /* .second-2-3-6{width: 154px;height: 36px;margin-top: 25px;margin-left: 20px;background-color: #448899;line-height: 36px;text-align: center;border-radius: 5px;}
+                .second-2-3-6-1{font-size: 16px;color: white;text-align: center;} */
+                .second-2-3-6{height: 36px;display: flex;}
+                .second-2-3-6-1{width: 154px;height: 36px;line-height: 34px;margin-top: 25px;margin-left: 20px;background-color: #448899;text-align: center;border-radius: 5px;font-size: 16px;color: white;text-align: center;}
+                .plz_date_time{height: 36px;line-height: 33px;margin-top: 25px;margin-left: 15px;font-size: 16px;display: none;color: red;}
+     
                 .hr{width: 100%;margin-top: 80px;margin-left: 10px;margin-right: 10px;}
                 /* 第三層============================================================ */
                 .three{width: 100%;margin-top: 40px;margin-left: 0px;color:#666666}
@@ -537,8 +552,8 @@
         <!-- 頂層============================================================ -->
         <div class="empty_fixed_bar" style="z-index: 9999;">
             <div class="navigation_bar">
-                <div class="taipei_oneday_tourist">台北一日遊</div>
-                <span class="item1" id="item1">預定行程</span>
+                <div class="taipei_oneday_tourist" onclick="location.href='/'">台北一日遊</div>
+                <span class="item1" id="item1" onclick="booking_btn()">預定行程</span>
                 <span class="item2" id="item2">
                     <span onclick="show_login_area()">登入</span>/<span onclick="show_signup_area()">註冊</span>
                 </span>
@@ -573,20 +588,77 @@
                         <input type="date" id="date">
                     </div>
                     <div class="second-2-3-4">選擇時間：
-                        <!-- <input type="radio"  id="radio1"  name="radio"  checked="checked"/><label for="radio1">選項一</label> -->
-                        <!-- <input type="radio" id="morning" name="MorA" onclick="morning_fun()" value="morning"><label for="morning" style="font-weight: 400;line-height: 18px;">上半天</label>
-                        <input type="radio" id="afternoon" name="MorA" onclick="afternoon_fun()" value="afternoon"><label for="afternoon" style="font-weight: 400;line-height: 18px;">下半天</label> -->
                         <label class="radio" for="morning" style="font-weight: 400;line-height: 18px;"><input type="radio" id="morning" name="MorA" onclick="morning_fun()" value="morning"><i class="radio__appearance"></i></label><span style="font-weight: 400;line-height: 18px;">上半天</span>
                         <label class="radio" for="afternoon" style="font-weight: 400;line-height: 18px;"><input type="radio" id="afternoon" name="MorA" onclick="afternoon_fun()" value="afternoon"><i class="radio__appearance"></i></label><span style="font-weight: 400;line-height: 18px;">下半天</span>
                     </div>
                     <div class="second-2-3-5">導覽費用：<span class="cost" id="cost"> （請選擇時間） </span></div>
                     <div class="second-2-3-6">
-                        <div class="second-2-3-6-1">開始預訂行程</div>
+                        <div class="second-2-3-6-1" onclick="start_book()">開始預訂行程</div><div class="plz_date_time"></div>
                     </div>
                 </div>
             </div>
             
         </div>
+        <script type="text/javascript">
+            function start_book(){
+                let item2=document.getElementById("item2");
+                let plz_date_time=document.querySelector(".plz_date_time")
+                let cost=document.getElementById("cost")
+                if(item2.style.display=="block"){
+                    show_login_area();
+                }else{
+                    let date=document.getElementById("date");
+                    console.log(date.value)
+                    if(date.value==""){
+                        plz_date_time.style.display="block";
+                        plz_date_time.innerHTML="請選擇日期";
+                    }else if(cost.innerHTML==" （請選擇時間） "){
+                        plz_date_time.style.display="block";
+                        plz_date_time.innerHTML="請選擇時間"
+                    }else{
+                        plz_date_time.style.display="none";
+
+                        let req=new XMLHttpRequest;
+                        req.open("POST","/api/booking");
+                        req.setRequestHeader("Content-type", "application/json")
+                        req.onload=function(){
+                            console.log(JSON.parse(this.responseText));
+                            if(JSON.parse(this.responseText)["ok"]==true){
+                                window.location="/booking"
+                            }else{
+                                plz_date_time.style.display="block";
+                                plz_date_time.innerHTML="錯誤的資料或伺服器內部錯誤";
+                            }
+                        }
+                        // 資料處理
+                        let time;
+                        let morning=document.querySelector("#morning");
+                        if(morning.value="morning"){
+                            time="上半天";
+                        }else{
+                            time="下半天"
+                        }
+                        let price;
+                        if(cost.innerHTML=="新台幣 2000 元"){
+                            price="2000";
+                        }else{
+                            price="2500";
+                        }
+                        req.send(
+                            JSON.stringify({
+                                "attractionId":pathname.split("/").pop(),
+                                "date": date.value,
+                                "time": time,
+                                "price": price
+                            })
+                        );
+                    }
+                    // if(date.)
+                    // let cost=document.querySelector(".cost");
+                    // console.log(cost.innerHTML);
+                }
+            }
+        </script>
         <hr class="hr">
         <!-- 第三層============================================================ -->
         <div class="three" id="three">
@@ -609,7 +681,7 @@
                     <div class="login_title">登入會員帳號</div>
                     <img class="icon_close" src="../static/icon_close.png" onclick="close_login()">
                 </div>
-                <input class="type_email" id="email_login" type="text" placeholder="輸入電子信箱">
+                <input class="type_email" id="email_login" type="email" placeholder="輸入電子信箱">
                 <input class="type_password" id="password_login" type="password" placeholder="輸入密碼">
                 <div class="login_btn" onclick="login()">登入帳戶</div>
 
@@ -627,7 +699,7 @@
                     <img class="icon_close" src="../static/icon_close.png" onclick="close_signup()">
                 </div>
                 <input class="signup_type_name" type="text" id="name_signup" placeholder="輸入姓名">
-                <input class="signup_type_email" type="text" id="email_signup" placeholder="輸入電子信箱">
+                <input class="signup_type_email" type="email" id="email_signup" placeholder="輸入電子信箱">
                 <input class="signup_type_password" type="password" id="password_signup" placeholder="輸入密碼">
                 <div class="signup_btn" onclick="signup()">註冊新帳戶</div>
 

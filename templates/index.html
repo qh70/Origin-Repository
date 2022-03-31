@@ -14,9 +14,8 @@
             // 檢查登入狀態
             function init(){
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/user");
+                req.open("get","/api/user");
                 req.onload=function(){
-                    console.log(JSON.parse(this.responseText)["data"])
                     if(JSON.parse(this.responseText)["data"]!=null){
                         let item2=document.getElementById("item2");
                         item2.style.display="none";
@@ -31,12 +30,12 @@
                     }
                 };
                 req.send();
-            }
+            }            
 
             // 載入 12 張圖片
             function getData(){
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/attractions?page=0")
+                req.open("get","/api/attractions?page=0")
                 req.onload=function(){
                     attractions_data=JSON.parse(this.responseText)
                     for(let j=0;j<12;j++){
@@ -50,7 +49,7 @@
                         image.className="first4pics";
                         image.src=attractions_data["data"][j]["images"][0];
                         // image.href="http://ec2-54-236-231-32.compute-1.amazonaws.com:3000/api/attractions?page=0"
-                        // http://54.236.231.32:3000/attraction/"+attractions_data["data"][j]["id"]+"'
+                        // /attraction/"+attractions_data["data"][j]["id"]+"'
                         div1.appendChild(image);
                         // up_word
                         let up_word=document.createElement("div");
@@ -91,7 +90,7 @@
                     // 沒有keyword
                     if(nextPage!=null&btn_function!="yes"){
                         let req=new XMLHttpRequest();
-                        req.open("get","http://54.236.231.32:3000/api/attractions?page="+nextPage+"")
+                        req.open("get","/api/attractions?page="+nextPage+"")
                         req.onload=function(){
                             attractions_data=JSON.parse(this.responseText)
                             for(let j=0;j<12;j++){
@@ -134,7 +133,7 @@
                     // 有 keyword，有下頁
                     else if(keyword_nextPage>0&keyword_nextPage!=null&btn_function==="yes"){
                         let req=new XMLHttpRequest();
-                        req.open("get","http://54.236.231.32:3000/api/attractions?page="+keyword_nextPage+"&keyword="+search_tourist_name_value+"")
+                        req.open("get","/api/attractions?page="+keyword_nextPage+"&keyword="+search_tourist_name_value+"")
                         req.onload=function(){
                             attractions_data=JSON.parse(this.responseText)
                             for(let j=0;j<12;j++){
@@ -181,7 +180,7 @@
                 search_tourist_name_value=document.getElementById("search_tourist_name").value;
                 newdiv.innerHTML=null;
                 let req=new XMLHttpRequest();
-                req.open("get","http://54.236.231.32:3000/api/attractions?page=0&keyword="+search_tourist_name_value+"")
+                req.open("get","/api/attractions?page=0&keyword="+search_tourist_name_value+"")
                 req.onload=function(){
                     attractions_data=JSON.parse(this.responseText)
                     if(attractions_data["message"]=="沒有此關鍵字的資料"){
@@ -225,7 +224,17 @@
                     keyword_nextPage=attractions_data["nextPage"];
                 }
                 req.send();                
-            }            
+            }      
+            
+            // 按下預訂行程按鈕
+            function booking_btn(){
+                let item2=document.getElementById("item2");
+                if(item2.style.display=="block"){
+                    console.log("y")
+                    show_login_area();
+                }
+                else{window.location="/booking"}
+            }      
 
             // 按下登入鍵
             function show_login_area(){
@@ -267,8 +276,8 @@
 
         <style type="text/css">    
             /* noto sans tc 載入 */
-            @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
-            body{font-family: 'Noto Sans TC';}
+            /* @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+            body{font-family: 'Noto Sans TC';} */
 
             /* 頂層============================================================ */
             .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;border-bottom: #e6e4e4 solid 1px;}
@@ -277,9 +286,9 @@
                 display: flex;align-items: center;
             }  
             .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
-            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;padding: 0px;color: #666666;}
-            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;}
-            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;}
+            .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;padding: 0px;color: #666666;cursor: pointer;}
+            .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
+            .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
             
             .empty_bar{height: 54px;margin: 0px;}
 
@@ -319,8 +328,8 @@
             /* 底層 */
             .copyright{height:104px;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;}
 
-            /* a */
-            a{text-decoration: none;color:#666666;}
+             /* a */
+             a{text-decoration: none;color:#666666;}
 
             /* 登入彈出視窗 */
             .overlay_login{width: 100%;height: 100%;display: none;position: fixed;z-index: 9999;top: 0;left: 0;background: rgb(0,0,0,0.7);}
@@ -357,8 +366,11 @@
             .signup_title{margin-left: auto;margin-right: auto;font-size: 24px;font-weight: bold;text-align: center;}
             .icon_close{width: 16px;height: 16px;top: 0px;right: 0px;cursor: pointer;}
             .signup_type_name{width: 310px;height: 47px;margin-top: 15px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
-            .signup_type_email{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            #name_signup_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
+            .signup_type_email{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;}
+            #email_signup_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
             .signup_type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
+            #password_signup_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
             .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
             #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
             #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
@@ -442,8 +454,8 @@
     <body style="margin: 0px;" onload="init();getData()" id="body">
         <div class="empty_fixed_bar">
             <div class="navigation_bar">
-                <div class="taipei_oneday_tourist">台北一日遊</div>
-                <span class="item1" id="item1">預定行程</span>
+                <div class="taipei_oneday_tourist" onclick="location.href='/'">台北一日遊</div>
+                <span class="item1" id="item1" onclick="booking_btn()">預定行程</span>
                 <span class="item2" id="item2">
                     <span onclick="show_login_area()">登入</span>/<span onclick="show_signup_area()">註冊</span>
                 </span>
@@ -479,7 +491,7 @@
                 <div class="login_title">登入會員帳號</div>
                 <img class="icon_close" src="../static/icon_close.png" onclick="close_login()">
             </div>
-            <input class="type_email" id="email_login" type="text" placeholder="輸入電子信箱">
+            <input class="type_email" id="email_login" type="email" placeholder="輸入電子信箱">
             <input class="type_password" id="password_login" type="password" placeholder="輸入密碼">
             <div class="login_btn" onclick="login()">登入帳戶</div>
 
@@ -497,8 +509,11 @@
                 <img class="icon_close" src="../static/icon_close.png" onclick="close_signup()">
             </div>
             <input class="signup_type_name" type="text" id="name_signup" placeholder="輸入姓名">
-            <input class="signup_type_email" type="text" id="email_signup" placeholder="輸入電子信箱">
+            <div id="name_signup_error_message">錯誤訊息</div>
+            <input class="signup_type_email" type="email" id="email_signup" placeholder="輸入電子信箱">
+            <div id="email_signup_error_message">錯誤訊息</div>
             <input class="signup_type_password" type="password" id="password_signup" placeholder="輸入密碼">
+            <div id="password_signup_error_message">錯誤訊息</div>
             <div class="signup_btn" onclick="signup()">註冊新帳戶</div>
 
             <div id="signup_failed" style="display:none">Email 已經註冊帳戶</div>
@@ -511,12 +526,12 @@
         // 登入會員
         function login(){
             let req=new XMLHttpRequest();
-            req.open("PATCH","http://54.236.231.32:3000/api/user");
+            req.open("PATCH","/api/user");
             req.setRequestHeader("Content-type", "application/json");
             req.onload=function(){
                 // 登入成功
                 if(JSON.parse(this.responseText)["ok"]==true){
-                    window.location="http://54.236.231.32:3000/";
+                    window.location="/";
                     // let overlay_login=document.getElementById("overlay_login");
                     // overlay_login.style.display="none";
                     // let item2=document.getElementById("item2");
@@ -546,11 +561,32 @@
                 })
             );
         }
+        // 註冊會員驗證
+        // let signupUpBtn=document.querySelector(".signup_btn");
+        let name_signup=document.getElementById("name_signup")
+        let signupPassed={
+            name:false,
+            username:false,
+            password:false,
+        };
+        signupUpBtn.disabled=Object.values(signupPassed).includes(false);
+        name_signup.addEventListener("input",(e) =>{
+            let input=e.target.value;
+            let message=document.getElementById("name_signup_error_message");
+
+            if(input){
+                e.target.style="background-color : rgba(255, 0, 0, 0.6)";
+                message.style = "display : inline-block";
+                message.textContent = "姓名長度需介於 1~7 個字";
+                signupPassed.name = false;
+                signUpBtn.disabled = Object.values(signupPassed).includes(false);
+            }
+        })
 
         // 註冊會員
         function signup(){
             let req=new XMLHttpRequest();
-            req.open("POST","http://54.236.231.32:3000/api/user");
+            req.open("POST","/api/user");
             req.setRequestHeader("Content-type", "application/json");
             req.onload=function(){
                 if(JSON.parse(this.responseText)["error"]===true){
@@ -612,9 +648,9 @@
         // 登出會員
         function logout(){
             let req=new XMLHttpRequest();
-            req.open("DELETE","http://54.236.231.32:3000/api/user")
+            req.open("DELETE","/api/user")
             req.onload=function(){
-                window.location="http://54.236.231.32:3000/";
+                window.location="/";
                 // let item2=document.getElementById("item2");
                 // item2.style.display="block";
                 // let logout=document.getElementById("logout");
