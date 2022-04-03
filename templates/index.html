@@ -318,8 +318,8 @@
 
         <style type="text/css">    
             /* noto sans tc 載入 */
-            /* @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
-            body{font-family: 'Noto Sans TC';} */
+            @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+            body{font-family: 'Noto Sans TC';}
 
             /* 頂層============================================================ */
             .empty_fixed_bar{height: 54px;margin: 0px;position: fixed;top: 0;left: 0;right: 0;background-color: white;border-bottom: #e6e4e4 solid 1px;}
@@ -852,7 +852,7 @@
         email_signup.addEventListener("keyup", (e) =>{
             let input=e.target.value;
             let email_signup_error_message=document.getElementById("email_signup_error_message");
-            if(input.includes("@"&&".")){
+            if(input.includes("@")&&input.includes(".")){
                 e.target.style="background-color : white";
                 email_signup_error_message.style = "display : none";
             }else{
