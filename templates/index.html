@@ -111,7 +111,6 @@
                         newdiv.appendChild(loading_div);
 
                         setTimeout(function(){
-                            loading_div.remove();
                             let req=new XMLHttpRequest();
                             req.open("get","/api/attractions?page="+nextPage+"")
                             req.onload=function(){
@@ -154,7 +153,7 @@
                                 }
                             }
                             req.send();
-                            
+                            loading_div.remove();
                         }, 1000);
 
                         
@@ -168,8 +167,6 @@
                         newdiv.appendChild(loading_div);
 
                         setTimeout(function(){
-                            loading_div.remove();
-
                             let req=new XMLHttpRequest();
                             req.open("get","/api/attractions?page="+keyword_nextPage+"&keyword="+search_tourist_name_value+"")
                             req.onload=function(){
@@ -213,6 +210,7 @@
                                 keyword_nextPage=attractions_data["nextPage"]
                             }
                             req.send();
+                            loading_div.remove();
                         },1000)
                     }
                 }
