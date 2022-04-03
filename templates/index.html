@@ -153,7 +153,10 @@
                                 }
                             }
                             req.send();
-                            loading_div.remove();
+                            async function remove(){
+                                 loading_div.remove();
+                            }
+                            remove();
                         }, 1000);
 
                         
