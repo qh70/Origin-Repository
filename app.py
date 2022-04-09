@@ -393,7 +393,7 @@ def api_orders_post():
 				order_number=order_number_list[0]
 				order_number_list.remove(order_number_list[0])
 				my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
-				my_cursor.execute("UPDATE `user` SET `訂單狀況`='未付款',`訂單編號`='"+str(order_number)+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
+				my_cursor.execute("UPDATE `user` SET `order status`='unpaid',`order number`='"+str(order_number)+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
 				db_connection_mydb.commit()
 				# print(order_number)
 				# print(order_number_list[0])
@@ -417,7 +417,7 @@ def api_orders_post():
 				Tappay_return=json.loads(res.text)
 				# print(Tappay_return["status"])
 				if Tappay_return["status"]==0:
-					my_cursor.execute("UPDATE `user` SET `訂單狀況`='已付款' WHERE `訂單編號`='"+str(order_number)+"'")
+					my_cursor.execute("UPDATE `user` SET `order status`='paid' WHERE `order number`='"+str(order_number)+"'")
 					my_cursor.execute("UPDATE `user` SET `attractionId`=NULL,`date`=NULL,`time`=NULL,`price`=NULL WHERE `email`='"+session["email"]+"'")
 					db_connection_mydb.commit()
 					return jsonify({"訂單編號":str(order_number),"message":"付款完成"})
