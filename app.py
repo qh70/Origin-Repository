@@ -1,6 +1,7 @@
 from flask import *
 from flask_cors import CORS
 from flask import session
+import requests
 
 
 app=Flask(__name__)
@@ -320,7 +321,6 @@ def api_booking_post():
 		
 @app.route("/api/booking")
 def api_booking_get():
-	print(session=={})
 	if session!={}:
 		if session["email"]!="logout":
 			try:
@@ -328,7 +328,7 @@ def api_booking_get():
 				my_cursor=db_connection_mydb.cursor()
 				my_cursor.execute("SELECT `date`,`time`,`price`,`attractionId` FROM `user` WHERE `email`='"+session["email"]+"'")
 				result_user=my_cursor.fetchone()
-				my_cursor.execute("SELECT `name`,`address`,`image` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
+				my_cursor.execute("SELECT `name`,`address`,`images` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
 				result_data=my_cursor.fetchone()
 				if result_data==None:
 					return jsonify({"data":None})
@@ -370,7 +370,71 @@ def api_booking_delete():
 		else:
 			return jsonify({"error":True,"message":"未登入"}), 403
 	else:
+		return jsonify({"error":True,"message":"未登入"}), 403
+
+order_number_list=list(range(10000000,20000000))
+@app.route("/api/orders", methods=["POST"])
+def api_orders_post():
+	if session!={}:
+		if session["email"]!="logout":
+			try:
+				# print(request.json)
+				prime=request.json["prime"]
+				price=request.json["order"]["price"]
+				# attraction_name=request.json["order"]["trip"]["attraction"]["name"]
+				date=request.json["order"]["trip"]["date"]
+				time=request.json["order"]["trip"]["time"]
+				phone=request.json["order"]["contact"]["phone"]
+				name=request.json["order"]["contact"]["name"]
+				email=request.json["order"]["contact"]["email"]
+				db_connection_mydb=pool.get_connection()
+				my_cursor=db_connection_mydb.cursor()
+				# print("訂單編號", order_number_list[0])
+				order_number=order_number_list[0]
+				order_number_list.remove(order_number_list[0])
+				my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
+				my_cursor.execute("UPDATE `user` SET `訂單狀況`='未付款',`訂單編號`='"+str(order_number)+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
+				db_connection_mydb.commit()
+				# print(order_number)
+				# print(order_number_list[0])
+				res=requests.post("https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime",
+					headers={"Content-Type": "application/json", "x-api-key":"partner_bXjiUDSnDMJe9W5oQApx75lDTAgmr2FylYwFF5nhM3DAEMSawElqMrsd"} ,
+					json={
+						"prime":prime,
+						"partner_key": "partner_bXjiUDSnDMJe9W5oQApx75lDTAgmr2FylYwFF5nhM3DAEMSawElqMrsd",
+						"merchant_id": "qh70_TAISHIN",
+						"details":"TapPay Test",
+						"amount":price,
+						"cardholder": {
+							"phone_number":phone,
+							"name":name,
+							"email":email
+						},
+						"remember": True
+					}
+				)
+				
+				Tappay_return=json.loads(res.text)
+				# print(Tappay_return["status"])
+				if Tappay_return["status"]==0:
+					my_cursor.execute("UPDATE `user` SET `訂單狀況`='已付款' WHERE `訂單編號`='"+str(order_number)+"'")
+					my_cursor.execute("UPDATE `user` SET `attractionId`=NULL,`date`=NULL,`time`=NULL,`price`=NULL WHERE `email`='"+session["email"]+"'")
+					db_connection_mydb.commit()
+					return jsonify({"訂單編號":str(order_number),"message":"付款完成"})
+				else:
+					return jsonify({"訂單編號":str(order_number),"message":"付款未完成"})
+			except:
+				return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
+			finally:
+				db_connection_mydb.close()
+		else:
 			return jsonify({"error":True,"message":"未登入"}), 403
+	else:
+		return jsonify({"error":True,"message":"未登入"}), 403
+
+# @app.route("/api/orders")
+# def api_orders_get():
+
 
 
 app.run(host="0.0.0.0",port=3000)
