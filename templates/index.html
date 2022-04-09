@@ -810,19 +810,19 @@
     </div>
     <script type="text/javascript">
         // 登入會員驗證
-        let email_login=document.getElementById("email_login")
-        email_login.addEventListener("keyup", (e) =>{
-            let input=e.target.value;
-            let email_login_error_message=document.getElementById("email_login_error_message");
-            if(input.includes("@"&&".")){
-                e.target.style="background-color : white";
-                email_login_error_message = "display : none";
-            }else{
-                e.target.style="background-color : rgba(255, 0, 0, 0.6)";
-                email_login_error_message.style = "display : inline-block";
-                email_login_error_message.textContent = "不符合電子信箱模式";
-            }
-        })
+        // let email_login=document.getElementById("email_login")
+        // email_login.addEventListener("keyup", (e) =>{
+        //     let input=e.target.value;
+        //     let email_login_error_message=document.getElementById("email_login_error_message");
+        //     if(input.includes("@"&&".")){
+        //         e.target.style="background-color : white";
+        //         email_login_error_message = "display : none";
+        //     }else{
+        //         e.target.style="background-color : rgba(255, 0, 0, 0.6)";
+        //         email_login_error_message.style = "display : inline-block";
+        //         email_login_error_message.textContent = "不符合電子信箱模式";
+        //     }
+        // })
 
         // 註冊會員驗證
         // 1. 姓名
