@@ -1,7 +1,7 @@
 from flask import *
 from flask_cors import CORS
 from flask import session
-import requests
+# import requests
 
 
 app=Flask(__name__)
