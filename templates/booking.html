@@ -40,10 +40,8 @@
                 req2.open("get","/api/booking");
                 req2.onload=function(){
                     booking_data=JSON.parse(this.responseText);
-                    console.log("1", this.responseText)
                     // 若沒有預訂行程
                     if(booking_data["data"]==null){
-                        console.log("2", booking_data["data"])
                         let second_2=document.querySelector(".second-2");
                         let three=document.querySelector(".three");
                         let four=document.querySelector(".four");
@@ -60,15 +58,9 @@
                         nobook_nologin.style.display="block";
                         nobook_nologin.innerHTML="目前沒有任何的預訂行程";
 
-                        // 嘗試讓 copyright 剛好高度 失敗
                         let cHeight = document.documentElement.clientHeight;
-                        // let firstHeight=document.querySelector(".empty_fixed_bar")
-                        // firstHeight=firstHeight.documentElement.offsetHeight;
-                        // let scheduleHeight=document.querySelector(".schedule").documentElement.offsetHeight;
-                        // document.body.style.height=cHeight-firstHeight-scheduleHeight;
                         document.body.style.height="100vh";
                     }else if(booking_data["error"]==true){
-                        console.log(booking_data["data"])
                         // 若沒有登入
                         let second_2=document.querySelector(".second-2");
                         let three=document.querySelector(".three");
@@ -96,7 +88,6 @@
                         let price=document.querySelector("#price");
                         let address=document.querySelector("#address");
                         // console.log(booking_data["data"]["attraction"]["image"].split(" ")[0])
-                        console.log("3", booking_data["data"])
                         pic.src=booking_data["data"]["attraction"]["image"].split(" ")[0];
                         name.innerHTML=booking_data["data"]["attraction"]["name"];
                         date.innerHTML=booking_data["data"]["date"];
@@ -165,12 +156,6 @@
                     // 登入成功
                     if(JSON.parse(this.responseText)["ok"]==true){
                         window.location="/booking";
-                        // let overlay_login=document.getElementById("overlay_login");
-                        // overlay_login.style.display="none";
-                        // let item2=document.getElementById("item2");
-                        // item2.style.display="none";
-                        // let logout=document.getElementById("logout");
-                        // logout.style.display="block";
                     }
                     // 密碼錯誤
                     else if(JSON.parse(this.responseText)["message"]=="密碼錯誤"){
@@ -233,10 +218,6 @@
                 req.open("DELETE","/api/user")
                 req.onload=function(){
                     window.location="/booking";
-                    // let item2=document.getElementById("item2");
-                    // item2.style.display="block";
-                    // let logout=document.getElementById("logout");
-                    // logout.style.display="none";
                 }
                 req.send();
             }
@@ -244,8 +225,8 @@
 
         <style type="text/css">    
             /* noto sans tc 載入 */
-            /* @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
-            body{font-family: 'Noto Sans TC';} */
+            @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+            body{font-family: 'Noto Sans TC';}
 
             /* 初始化 */ 
             *{box-sizing: border-box;}
@@ -299,14 +280,7 @@
             /* 第五層============================================================ */
             .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
             .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
-            /* TapPay fields */
-            /* .tpfield {
-                height: 40px;
-                width: 300px;
-                border: 1px solid gray;
-                margin: 5px 0;
-                padding: 5px;
-            } */
+            
             /* 底層 */
             .copyright{height: 100%;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;margin-bottom: 0px;}
             /* 登入彈出視窗============================================================ */  
@@ -523,21 +497,7 @@
             const message = document.querySelector(".message");
             var submitButton = document.getElementById("submit-button");
 
-            // TPDirect.card.onUpdate(function (update) {
-            // if (update.canGetPrime) {
-            //     submitButton.removeAttribute("disabled");
-            // } else {
-            //     submitButton.setAttribute("disabled", true);
-            // }
-
-            // if (update.hasError) {
-            //     cardViewContainer.classList.add("error");
-            // } else {
-            //     cardViewContainer.classList.remove("error");
-            // }
-
             TPDirect.card.onUpdate(function (update) {
-                // update.canGetPrime === true
                 // --> you can call TPDirect.card.getPrime()
                 if (update.canGetPrime) {
                     // Enable submit Button to get prime.
@@ -546,57 +506,16 @@
                     // Disable submit Button to get prime.
                     submitButton.setAttribute('disabled', true);
                 }
-
-                // cardTypes = ['mastercard', 'visa', 'jcb', 'amex', 'unionpay','unknown']
-                // if (update.cardType === 'visa') {
-                //     Handle card type visa.
-                // }
-
-                // number 欄位是錯誤的
-                // if (update.status.number === 2) {
-                //     setNumberFormGroupToError()
-                // } else if (update.status.number === 0) {
-                //     setNumberFormGroupToSuccess()
-                // } else {
-                //     setNumberFormGroupToNormal()
-                // }
-
-                // if (update.status.expiry === 2) {
-                //     setNumberFormGroupToError()
-                // } else if (update.status.expiry === 0) {
-                //     setNumberFormGroupToSuccess()
-                // } else {
-                //     setNumberFormGroupToNormal()
-                // }
-
-                // if (update.status.ccv === 2) {
-                //     setNumberFormGroupToError()
-                // } else if (update.status.ccv === 0) {
-                //     setNumberFormGroupToSuccess()
-                // } else {
-                //     setNumberFormGroupToNormal()
-                // }
             })
 
             TPDirect.card.getTappayFieldsStatus();
 
-            // if (update.status.number) {
-            //     message.classList.remove("none");
-            //     message.textContent = '"Please check your credit card number"';
-            // } else {
-            //     message.classList.add("none");
-            // }
-            // });
-            //--------------------------------pay-------------------------------
             let orderData;
             function onClick() {
                 const inputName = document.querySelector("#name_info").value;
                 const inputEmail = document.querySelector("#email_info").value;
                 const inputTelephone = document.querySelector("#phone_info").value;
                 TPDirect.card.getPrime(function (result) {
-                    // console.log(inputEmail)
-                    // console.log(!inputName)
-                    // console.log(!inputTelephone)
                     if (!inputEmail || !inputName || !inputTelephone) {
                         warming.style.display="block";
                         return;
@@ -639,15 +558,7 @@
                             headers: {"Content-Type": "application/json",},
                             body: JSON.stringify(orderData)
                         });
-                        // console.log(typeof(response))
-                        // console.log(response.text)
-                        // console.log(response["message"])
-                        // console.log(response.message)
-                        // console.log(JSON.stringify(response))
                         const res = await response.json();
-                        // console.log(res)
-                        // console.log(typeof(response))
-                        // console.log(typeof(res))
                         if(res["message"]=="付款完成"){
                             window.location="/thankyou?number="+res["訂單編號"]
                         }else{
@@ -832,83 +743,14 @@
             })
         </script> -->
         <!-- <script>
-            TPDirect.card.setup({
-    // Display ccv field
-    let fields = {
-        number: {
-            // css selector
-            element: '#card-number',
-            placeholder: '**** **** **** ****'
-        },
-        expirationDate: {
-            // DOM object
-            element: document.getElementById('card-expiration-date'),
-            placeholder: 'MM / YY'
-        },
-        ccv: {
-            element: '#card-ccv',
-            placeholder: 'ccv'
-        }
-    }
-    // Not display ccv field
-    let fields = {
-        number: {
-            // css selector
-            element: '#card-number',
-            placeholder: '**** **** **** ****'
-        },
-        expirationDate: {
-            // DOM object
-            element: document.getElementById('card-expiration-date'),
-            placeholder: 'MM / YY'
-        }
-    }
+            
 
-    fields: fields,
-    styles: {
-        // Style all elements
-        'input': {
-            'color': 'gray'
-        },
-        // Styling ccv field
-        'input.ccv': {
-            // 'font-size': '16px'
-        },
-        // Styling expiration-date field
-        'input.expiration-date': {
-            // 'font-size': '16px'
-        },
-        // Styling card-number field
-        'input.card-number': {
-            // 'font-size': '16px'
-        },
-        // style focus state
-        ':focus': {
-            // 'color': 'black'
-        },
-        // style valid state
-        '.valid': {
-            'color': 'green'
-        },
-        // style invalid state
-        '.invalid': {
-            'color': 'red'
-        },
-        // Media queries
-        // Note that these apply to the iframe, not the root window.
-        '@media screen and (max-width: 400px)': {
-            'input': {
-                'color': 'orange'
-            }
-        }
-    }
-})
-        </script> -->
+    
         
         </script>
 
         
-        <!-- <script>
+        <script>
             function check_pay(){
                 let req=new XMLHttpRequest();
                 req.open("post", "/api/orders");
