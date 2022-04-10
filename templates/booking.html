@@ -40,9 +40,10 @@
                 req2.open("get","/api/booking");
                 req2.onload=function(){
                     booking_data=JSON.parse(this.responseText);
-
+                    console.log("1", this.responseText)
                     // 若沒有預訂行程
                     if(booking_data["data"]==null){
+                        console.log("2", booking_data["data"])
                         let second_2=document.querySelector(".second-2");
                         let three=document.querySelector(".three");
                         let four=document.querySelector(".four");
@@ -67,6 +68,7 @@
                         // document.body.style.height=cHeight-firstHeight-scheduleHeight;
                         document.body.style.height="100vh";
                     }else if(booking_data["error"]==true){
+                        console.log(booking_data["data"])
                         // 若沒有登入
                         let second_2=document.querySelector(".second-2");
                         let three=document.querySelector(".three");
@@ -94,6 +96,7 @@
                         let price=document.querySelector("#price");
                         let address=document.querySelector("#address");
                         // console.log(booking_data["data"]["attraction"]["image"].split(" ")[0])
+                        console.log("3", booking_data["data"])
                         pic.src=booking_data["data"]["attraction"]["image"].split(" ")[0];
                         name.innerHTML=booking_data["data"]["attraction"]["name"];
                         date.innerHTML=booking_data["data"]["date"];
