@@ -328,7 +328,7 @@ def api_booking_get():
 				my_cursor=db_connection_mydb.cursor()
 				my_cursor.execute("SELECT `date`,`time`,`price`,`attractionId` FROM `user` WHERE `email`='"+session["email"]+"'")
 				result_user=my_cursor.fetchone()
-				my_cursor.execute("SELECT `name`,`address`,`images` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
+				my_cursor.execute("SELECT `name`,`address`,`image` FROM `sub_data` WHERE `id`='"+str(result_user[3])+"'")
 				result_data=my_cursor.fetchone()
 				if result_data==None:
 					return jsonify({"data":None})
