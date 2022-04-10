@@ -2,7 +2,7 @@ from flask import *
 from flask_cors import CORS
 from flask import session
 import requests
-import json
+
 
 app=Flask(__name__)
 CORS(app)
@@ -372,7 +372,7 @@ def api_booking_delete():
 	else:
 		return jsonify({"error":True,"message":"未登入"}), 403
 
-order_number_list=list(range(10000000,20000000))
+order_number_list=list(range(1,100))
 @app.route("/api/orders", methods=["POST"])
 def api_orders_post():
 	if session!={}:
