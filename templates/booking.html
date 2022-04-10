@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
         <title>台北市景點列表</title>
         <script type="text/javascript">
+            let booking_data;
+
             // 讓所有 hr 標籤消失的 function
             function hr_change(){
                 let hrs=document.getElementsByTagName("hr");
@@ -37,9 +39,7 @@
                 let req2=new XMLHttpRequest();
                 req2.open("get","/api/booking");
                 req2.onload=function(){
-                    console.log(JSON.parse(this.responseText));
-                    let booking_data=JSON.parse(this.responseText);
-
+                    booking_data=JSON.parse(this.responseText);
                     // 若沒有預訂行程
                     if(booking_data["data"]==null){
                         let second_2=document.querySelector(".second-2");
@@ -58,12 +58,7 @@
                         nobook_nologin.style.display="block";
                         nobook_nologin.innerHTML="目前沒有任何的預訂行程";
 
-                        // 嘗試讓 copyright 剛好高度 失敗
                         let cHeight = document.documentElement.clientHeight;
-                        // let firstHeight=document.querySelector(".empty_fixed_bar")
-                        // firstHeight=firstHeight.documentElement.offsetHeight;
-                        // let scheduleHeight=document.querySelector(".schedule").documentElement.offsetHeight;
-                        // document.body.style.height=cHeight-firstHeight-scheduleHeight;
                         document.body.style.height="100vh";
                     }else if(booking_data["error"]==true){
                         // 若沒有登入
@@ -99,6 +94,7 @@
                         time.innerHTML=booking_data["data"]["time"];
                         price.innerHTML=booking_data["data"]["price"];
                         address.innerHTML=booking_data["data"]["attraction"]["address"];
+                        document.getElementById("final_price").innerHTML=booking_data["data"]["price"];
                     }
                 }
                 req2.send();
@@ -160,12 +156,6 @@
                     // 登入成功
                     if(JSON.parse(this.responseText)["ok"]==true){
                         window.location="/booking";
-                        // let overlay_login=document.getElementById("overlay_login");
-                        // overlay_login.style.display="none";
-                        // let item2=document.getElementById("item2");
-                        // item2.style.display="none";
-                        // let logout=document.getElementById("logout");
-                        // logout.style.display="block";
                     }
                     // 密碼錯誤
                     else if(JSON.parse(this.responseText)["message"]=="密碼錯誤"){
@@ -228,10 +218,6 @@
                 req.open("DELETE","/api/user")
                 req.onload=function(){
                     window.location="/booking";
-                    // let item2=document.getElementById("item2");
-                    // item2.style.display="block";
-                    // let logout=document.getElementById("logout");
-                    // logout.style.display="none";
                 }
                 req.send();
             }
@@ -283,9 +269,18 @@
             .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
             .cc_info{font-size: 19px;font-weight: bold;}
             .four>div{margin-top: 24px;margin-left: 0px;}
+            .tpfield {
+                height: 38px;
+                width: 200px;
+                border: 1px solid gray;
+                margin: 5px 0;
+                padding: 5px;
+            }
+            #warming{margin-left: 0px;color: red;font-size: 16px;font-weight: bold;display: none;}
             /* 第五層============================================================ */
             .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
             .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
+            
             /* 底層 */
             .copyright{height: 100%;background-color: #757575;text-align: center;line-height: 104px;color: white;font-size: 13.3px;margin-top: 40px;margin-bottom: 0px;}
             /* 登入彈出視窗============================================================ */  
@@ -395,7 +390,7 @@
                     <div class="price">費用：<span id="price" style="font-weight: 300;"></span></div>
                     <div class="address">地點：<span id="address" style="font-weight: 300;"></span></div>
                 </div>
-                <img class="icon_delete" src="/static/icon_delete.png" onclick="delete_pic()">
+                <img class="icon_delete" src="../static/icon_delete.png" onclick="delete_pic()">
             </div>
         </div>
         <script type="text/javascript">
@@ -415,27 +410,386 @@
         <!-- 第三層============================================================ -->
         <div class="three">
             <h3 class="contact">您的聯絡資訊</h3>
-            <div class="name_info">聯絡姓名：<input></div>
-            <div class="email_info">連絡信箱：<input></div>
-            <div class="phone_info">手機號碼：<input></div>
+            <div class="name_info">聯絡姓名：<input id="name_info"></div>
+            <div class="email_info">連絡信箱：<input id="email_info"></div>
+            <div class="phone_info">手機號碼：<input id="phone_info"></div>
             <h4 class="plz_check">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</h4>
         </div>
 
         <hr style="margin-top: 40px;">
-        <!-- 第四層============================================================ -->
-        <div class="four">
+        <!-- 第四層 TapPay fields============================================== -->            
+        <div class="four" id="cardview-container">
             <h3 class="cc_info">信用卡付款資訊</h3>
-            <div>卡片號碼：<input></div>
-            <div>過期時間：<input></div>
-            <div>驗證密碼：<input></div>
+            <div style="display:flex"><span style="line-height:48px">卡片號碼：</span><div class="tpfield" id="card-number"></div></div>
+            <div style="display:flex;"><span style="line-height:48px">過期時間：</span><div class="tpfield" id="card-expiration-date"></div></div>
+            <div style="display:flex"><span style="line-height:48px">驗證密碼：</span><div class="tpfield" id="card-ccv"></div></div>
+            <div id="warming">請確認您的聯絡資訊與信用卡資訊正確</div>
         </div>
-
+        
         <hr style="margin-top: 40px;">
         <!-- 第五層============================================================ -->
         <div class="five">
-            <div>總價：</div>
-            <div class="check_pay">確認訂購並付款</div>
+            <div>總價：<span id="final_price"></span></div>
+            <div class="check_pay" id="submit-button" onclick="onClick()" disabled>確認訂購並付款</div>
         </div>
+        <!-- <button id="submit-button" onclick="onClick()">submit</button> -->
+        <script src="https://js.tappaysdk.com/tpdirect/v5.8.0"></script>
+        <script>
+            let warming=document.getElementById("warming");
+
+            TPDirect.setupSDK(123978, "app_6vZtNGTsC0AMtSJnbGtZFsJTp0nx5AWk9iD3eIWmZP0HXVL0DNpzvAobxlcq", 'sandbox')
+            let fields = {
+                number: {
+                    // css selector
+                    element: '#card-number',
+                    placeholder: '**** **** **** ****'
+                },
+                expirationDate: {
+                    // DOM object
+                    element: document.getElementById('card-expiration-date'),
+                    placeholder: 'MM / YY'
+                },
+                ccv: {
+                    element: '#card-ccv',
+                    placeholder: 'ccv'
+                }
+            }
+            TPDirect.card.setup({fields,
+                styles: {
+                    // Style all elements
+                    'input': {
+                        'color': 'gray'
+                    },
+                    // Styling ccv field
+                    'input.ccv': {
+                        // 'font-size': '16px'
+                    },
+                    // Styling expiration-date field
+                    'input.expiration-date': {
+                        // 'font-size': '16px'
+                    },
+                    // Styling card-number field
+                    'input.card-number': {
+                        // 'font-size': '16px'
+                    },
+                    // style focus state
+                    ':focus': {
+                        // 'color': 'black'
+                    },
+                    // style valid state
+                    '.valid': {
+                        'color': 'green'
+                    },
+                    // style invalid state
+                    '.invalid': {
+                        'color': 'red'
+                    },
+                    // Media queries
+                    // Note that these apply to the iframe, not the root window.
+                    '@media screen and (max-width: 400px)': {
+                        'input': {
+                            'color': 'orange'
+                        }
+                    }
+                }
+            })
+            const cardViewContainer = document.querySelector("#cardview-container");
+            const message = document.querySelector(".message");
+            var submitButton = document.getElementById("submit-button");
+
+            TPDirect.card.onUpdate(function (update) {
+                // --> you can call TPDirect.card.getPrime()
+                if (update.canGetPrime) {
+                    // Enable submit Button to get prime.
+                    submitButton.removeAttribute('disabled')
+                } else {
+                    // Disable submit Button to get prime.
+                    submitButton.setAttribute('disabled', true);
+                }
+            })
+
+            TPDirect.card.getTappayFieldsStatus();
+
+            let orderData;
+            function onClick() {
+                const inputName = document.querySelector("#name_info").value;
+                const inputEmail = document.querySelector("#email_info").value;
+                const inputTelephone = document.querySelector("#phone_info").value;
+                TPDirect.card.getPrime(function (result) {
+                    if (!inputEmail || !inputName || !inputTelephone) {
+                        warming.style.display="block";
+                        return;
+                    }
+                    console.log(result)
+                    console.log(result.status)
+                    var inputPrime = result.card.prime;
+                    if (result.status !== 0) {
+                        warming.style.display="block";
+                        return;
+                    }
+                    var inputPrime = result.card.prime;
+                    orderData = {
+                        "prime": inputPrime,
+                        "order": {
+                            "price": price.innerHTML,
+                            "trip": {
+                                "attraction": {
+                                    "id": booking_data["data"]["attraction"]["id"],
+                                    "name": name.innerHTML,
+                                    "address":address.innerHTML,
+                                    "image":booking_data["data"]["attraction"]["image"].split(" ")[0]
+                                },
+                                "date": date.innerHTML,
+                                "time": time.innerHTML
+                            },
+                            "contact": {
+                                "name": inputName,
+                                "email": inputEmail,
+                                "phone": inputTelephone
+                            },
+                        }
+                    };
+                    console.log(orderData)
+                    order();
+
+                    async function order(){
+                        const response = await fetch("/api/orders", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/json",},
+                            body: JSON.stringify(orderData)
+                        });
+                        const res = await response.json();
+                        if(res["message"]=="付款完成"){
+                            window.location="/thankyou?number="+res["訂單編號"]
+                        }else{
+                            alert("付款失敗")
+                        }
+                    }
+
+                })
+            }
+        </script>
+
+
+        <!-- 2. 官網 -->
+        <!-- <div class="four" id="cardview-container">
+            <h3 class="cc_info">信用卡付款資訊</h3>
+            卡片號碼：<div class="tpfield" id="card-number"><input></div>
+            過期時間：<div class="tpfield" id="card-expiration-date"><input></div>
+            驗證密碼：<div class="tpfield" id="card-ccv"><input></div>
+        </div> -->
+        <!-- <div class="message"></div> -->
+        <!-- <style>
+            .tpfield {
+                height: 40px;
+                width: 300px;
+                border: 1px solid gray;
+                margin: 5px 0;
+                padding: 5px;
+            }
+            .tappay-field-focus {
+                border-color: #66afe9;
+                outline: 0;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+            }
+        </style>
+        
+        <script src="https://js.tappaysdk.com/tpdirect/v5.8.0"></script>
+            <script>
+                TPDirect.setupSDK(104581, 'lcDsw7tkLWBtgfICsr4MJ6MMYJ2GIrVxfUZjm3ITi1tMmi5FCOfXvDDuiopfiFfg', 'sandbox')
+                TPDirect.card.setup({
+                    // Display ccv field
+                    let fields = {
+                        number: {
+                            // css selector
+                            element: '#card-number',
+                            placeholder: '**** **** **** ****'
+                        },
+                        expirationDate: {
+                            // DOM object
+                            element: document.getElementById('card-expiration-date'),
+                            placeholder: 'MM / YY'
+                        },
+                        ccv: {
+                            element: '#card-ccv',
+                            placeholder: 'ccv'
+                        }
+                    }
+                    styles: {
+                        // Style all elements
+                        'input': {
+                            'color': 'gray'
+                        },
+                        // Styling ccv field
+                        'input.ccv': {
+                            // 'font-size': '16px'
+                        },
+                        // Styling expiration-date field
+                        'input.expiration-date': {
+                            // 'font-size': '16px'
+                        },
+                        // Styling card-number field
+                        'input.card-number': {
+                            // 'font-size': '16px'
+                        },
+                        // style focus state
+                        ':focus': {
+                            // 'color': 'black'
+                        },
+                        // style valid state
+                        '.valid': {
+                            'color': 'green'
+                        },
+                        // style invalid state
+                        '.invalid': {
+                            'color': 'red'
+                        },
+                        // Media queries
+                        // Note that these apply to the iframe, not the root window.
+                        '@media screen and (max-width: 400px)': {
+                            'input': {
+                                'color': 'orange'
+                            }
+                        }
+                    }
+                })    
+            TPDirect.card.onUpdate(function (update) {
+                // update.canGetPrime === true
+                // you can call TPDirect.card.getPrime()
+                if (update.canGetPrime) {
+                    // Enable submit Button to get prime.
+                    submitButton.removeAttribute('disabled')
+                } else {
+                    // Disable submit Button to get prime.
+                    submitButton.setAttribute('disabled', true)
+                }
+
+                // // cardTypes = ['mastercard', 'visa', 'jcb', 'amex', 'unionpay','unknown']
+                // if (update.cardType === 'visa') {
+                //     // Handle card type visa.
+                // }
+
+                // number 欄位是錯誤的
+                if (update.status.number === 2) {
+                    setNumberFormGroupToError()
+                } else if (update.status.number === 0) {
+                    setNumberFormGroupToSuccess()
+                } else {
+                    setNumberFormGroupToNormal()
+                }
+
+                if (update.status.expiry === 2) {
+                    setNumberFormGroupToError()
+                } else if (update.status.expiry === 0) {
+                    setNumberFormGroupToSuccess()
+                } else {
+                    setNumberFormGroupToNormal()
+                }
+
+                if (update.status.ccv === 2) {
+                    setNumberFormGroupToError()
+                } else if (update.status.ccv === 0) {
+                    setNumberFormGroupToSuccess()
+                } else {
+                    setNumberFormGroupToNormal()
+                }
+            })
+            TPDirect.card.getTappayFieldsStatus()
+            function gett_prime(){
+                TPDirect.card.getPrime(function onSubmit(event) {
+                    event.preventDefault()
+
+                    // 取得 TapPay Fields 的 status
+                    const tappayStatus = TPDirect.card.getTappayFieldsStatus()
+
+                    // 確認是否可以 getPrime
+                    if (tappayStatus.canGetPrime === false) {
+                        alert('can not get prime')
+                        return
+                    }
+
+                    // Get prime
+                    TPDirect.card.getPrime((result) => {
+                        if (result.status !== 0) {
+                            alert('get prime error ' + result.msg)
+                            return
+                        }
+                        alert('get prime 成功，prime: ' + result.card.prime)
+
+                        // send prime to your server, to pay with Pay by Prime API .
+                        // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
+                    })
+                })
+            }
+            
+        </script>
+        <div id="cardview-container">
+            <div class="tpfield" id="card-number"><input></div>
+            <div class="tpfield" id="card-expiration-date"><input></div>
+            <div class="tpfield" id="card-ccv"><input></div>
+            <button onclick="gett_prime()">onSubmit</button>
+        </div> -->
+
+        <!-- TapPay fields -->
+        <!-- <script src="https://js.tappaysdk.com/tpdirect/v5.8.0"></script>
+        <script>
+            TPDirect.setupSDK({
+                rbaAppId: "104581",
+                rbaAppKey: "lcDsw7tkLWBtgfICsr4MJ6MMYJ2GIrVxfUZjm3ITi1tMmi5FCOfXvDDuiopfiFfg",
+                tappayAppId: APP_ID,
+                tappayAppKey: "APP_KEY",
+                env: "production"
+            })
+        </script> -->
+        <!-- <script>
+            
+
+    
+        
+        </script>
+
+        
+        <script>
+            function check_pay(){
+                let req=new XMLHttpRequest();
+                req.open("post", "/api/orders");
+                req.onload=function (){
+
+                }
+                let pic=document.querySelector(".pic");
+                let name=document.querySelector("#name");
+                let date=document.querySelector("#date");
+                let time=document.querySelector("#time");
+                let price=document.querySelector("#price");
+                let address=document.querySelector("#address");
+                let contact=document.querySelector(".contact")
+                req.send(
+                    JSON.stringify({
+                        "prime": "前端從第三方金流 TapPay 取得的交易碼",
+                        "order": {
+                            "price": price.innerHTML,
+                            "trip": {
+                                "attraction": {
+                                    "id": booking_data["data"]["id"],
+                                    "name":name.innerHTML,
+                                    "address":address.innerHTML,
+                                    "image":pic.src
+                                },
+                                "date":date.innerHTML,
+                                "time":time.innerHTML
+                            },
+                            "contact": {
+                                // "name":contact.name_info.[1].innerHTML,
+                                // "email":contact.email_info.[1].innerHTML,
+                                // "phone":contact.phone_info.[1].innerHTML
+                            }
+                        }
+                    })
+                );
+            }
+        </script> -->
+
         <!-- 底層============================================================ -->
         <div class="copyright">
             COPYRIGHT © 2021 台北一日遊
