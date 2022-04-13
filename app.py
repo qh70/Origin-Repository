@@ -372,31 +372,40 @@ def api_booking_delete():
 	else:
 		return jsonify({"error":True,"message":"未登入"}), 403
 
-order_number_list=list(range(1,100))
+order_number_list=[]
+for i in range(1,30):
+	order_number_list.append(str(i).rjust(3,"0"))
 @app.route("/api/orders", methods=["POST"])
 def api_orders_post():
 	if session!={}:
 		if session["email"]!="logout":
 			try:
-				# print(request.json)
 				prime=request.json["prime"]
 				price=request.json["order"]["price"]
-				# attraction_name=request.json["order"]["trip"]["attraction"]["name"]
 				date=request.json["order"]["trip"]["date"]
 				time=request.json["order"]["trip"]["time"]
 				phone=request.json["order"]["contact"]["phone"]
 				name=request.json["order"]["contact"]["name"]
+				contact_email=request.json["order"]["contact"]["email"]
+				attractionId=request.json["order"]["trip"]["attraction"]["id"]
+				# 須注意 "聯絡 email" 與 "登入 email" 一致
 				email=request.json["order"]["contact"]["email"]
 				db_connection_mydb=pool.get_connection()
 				my_cursor=db_connection_mydb.cursor()
-				# print("訂單編號", order_number_list[0])
-				order_number=order_number_list[0]
+				# 生成訂單編號
+				time_to_orderNumber=0
+				if time=="上半天":
+					time_to_orderNumber="1"
+				else:
+					time_to_orderNumber="2"
+				order_number=date.replace("-","")+time_to_orderNumber+phone[-8:]+order_number_list[0]
 				order_number_list.remove(order_number_list[0])
 				my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
-				my_cursor.execute("UPDATE `user` SET `order status`='unpaid',`order number`='"+str(order_number)+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
+				my_cursor.execute("UPDATE `user` SET `phone`='"+phone+"',`order status`='unpaid',`order number`='"+order_number+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
+				print(phone, type(int(attractionId)), date, time)
+				my_cursor.execute("INSERT INTO `order_list` (`order_number`, `contact_name`, `contact_email`, `phone`, `attractionId`, `date`, `time`) VALUES ('"+str(order_number)+"', '"+name+"', '"+contact_email+"', '"+phone+"', '"+str(attractionId)+"', '"+date+"', '"+time+"');")
+				print(1)
 				db_connection_mydb.commit()
-				# print(order_number)
-				# print(order_number_list[0])
 				res=requests.post("https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime",
 					headers={"Content-Type": "application/json", "x-api-key":"partner_bXjiUDSnDMJe9W5oQApx75lDTAgmr2FylYwFF5nhM3DAEMSawElqMrsd"} ,
 					json={
@@ -415,15 +424,17 @@ def api_orders_post():
 				)
 				
 				Tappay_return=json.loads(res.text)
-				# print(Tappay_return["status"])
+				print(Tappay_return["status"])
 				if Tappay_return["status"]==0:
 					my_cursor.execute("UPDATE `user` SET `order status`='paid' WHERE `order number`='"+str(order_number)+"'")
 					my_cursor.execute("UPDATE `user` SET `attractionId`=NULL,`date`=NULL,`time`=NULL,`price`=NULL WHERE `email`='"+session["email"]+"'")
+					my_cursor.execute("UPDATE `order_list` SET `order_status`='paid' WHERE `order_number`='"+str(order_number)+"'")
 					db_connection_mydb.commit()
 					return jsonify({"訂單編號":str(order_number),"message":"付款完成"})
 				else:
 					return jsonify({"訂單編號":str(order_number),"message":"付款未完成"})
-			except:
+			except mysql.connector.Error as err:
+				print(err)
 				return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
 			finally:
 				db_connection_mydb.close()
@@ -432,9 +443,55 @@ def api_orders_post():
 	else:
 		return jsonify({"error":True,"message":"未登入"}), 403
 
-# @app.route("/api/orders")
-# def api_orders_get():
-
+@app.route("/api/orders")
+def api_orders_get():
+	if session!={}:
+		if session["email"]!="logout":
+			try:
+				db_connection_mydb=pool.get_connection()
+				my_cursor=db_connection_mydb.cursor(buffered=True)
+				print(0)
+				order_number=request.args.get("number")
+				my_cursor.execute("SELECT `contact_email`,`contact_name`,`phone`,`attractionId`,`date`,`time`,`order_status` FROM `order_list` WHERE `order_number`='"+order_number+"'")
+				order_get_result_data_user=my_cursor.fetchone()
+				print(order_get_result_data_user)
+				if order_get_result_data_user != None:
+					my_cursor.execute("SELECT `name`,`address`,`image` FROM `sub_data` WHERE `id`='"+str(order_get_result_data_user[3])+"'")
+					order_get_result_data_subdata=my_cursor.fetchone()
+					print(order_get_result_data_subdata)
+					return jsonify({
+						"data": {
+							"number": order_get_result_data_user[0],
+							"price": "price",
+							"trip": {
+								"attraction": {
+									"id": order_get_result_data_user[3],
+									"name": order_get_result_data_subdata[0],
+									"address": order_get_result_data_subdata[1],
+									"image": order_get_result_data_subdata[2]
+								},
+								"date": order_get_result_data_user[4],
+								"time": order_get_result_data_user[5]
+							},
+							"contact": {
+								"name": order_get_result_data_user[1],
+								"email": order_get_result_data_user[0],
+								"phone": order_get_result_data_user[2]
+							},
+							"status": order_get_result_data_user[6]
+						}
+					})
+				else:
+					return jsonify({"error" : True, "message" : "無此訂單"})
+			except mysql.connector.Error as err:
+				print(err, "error msg")
+				return jsonify({"error":True,"message":"伺服器內部錯誤"}), 500
+			finally:
+				db_connection_mydb.close()
+		else:
+			return jsonify({"error":True,"message":"未登入"}), 403
+	else:
+		return jsonify({"error":True,"message":"未登入"}), 403
 
 
 app.run(host="0.0.0.0",port=3000)
