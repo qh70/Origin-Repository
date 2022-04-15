@@ -14,10 +14,21 @@ import mysql.connector
 
 # connection pool
 from mysql.connector import Error, pooling
+
+# 到 env.txt 取密碼 mysql_tourist_PW
+# with open("env.txt", "r", encoding="utf-8") as env_response:
+# 	mysql_tourist_PW=env_response.readline().rstrip()
+
+# 取得 .env 裡的值
+import os
+from dotenv import load_dotenv
+load_dotenv()
+mysql_password=os.getenv("mysql_password")
+
 pool=pooling.MySQLConnectionPool(
 	host="localhost",
 	user="jerry",
-	password="12345678",
+	password=mysql_password,
 	database="tourist_data",
 	pool_name="mypool",
 	pool_size=3,
@@ -372,6 +383,10 @@ def api_booking_delete():
 	else:
 		return jsonify({"error":True,"message":"未登入"}), 403
 
+# 到 .env 取 partner_key 和 merchant_id
+partner_key=os.getenv("partner_key")
+merchant_id=os.getenv("merchant_id")
+
 order_number_list=[]
 for i in range(1,30):
 	order_number_list.append(str(i).rjust(3,"0"))
@@ -402,16 +417,16 @@ def api_orders_post():
 				order_number_list.remove(order_number_list[0])
 				my_cursor.execute("SET SQL_SAFE_UPDATES = 0")
 				my_cursor.execute("UPDATE `user` SET `phone`='"+phone+"',`order status`='unpaid',`order number`='"+order_number+"' WHERE `email`='"+session["email"]+"' AND `date`='"+date+"' AND `time`='"+time+"'")
-				print(phone, type(int(attractionId)), date, time)
+				# print(phone, type(int(attractionId)), date, time)
 				my_cursor.execute("INSERT INTO `order_list` (`order_number`, `contact_name`, `contact_email`, `phone`, `attractionId`, `date`, `time`) VALUES ('"+str(order_number)+"', '"+name+"', '"+contact_email+"', '"+phone+"', '"+str(attractionId)+"', '"+date+"', '"+time+"');")
-				print(1)
+				# print(1)
 				db_connection_mydb.commit()
 				res=requests.post("https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime",
-					headers={"Content-Type": "application/json", "x-api-key":"partner_bXjiUDSnDMJe9W5oQApx75lDTAgmr2FylYwFF5nhM3DAEMSawElqMrsd"} ,
+					headers={"Content-Type": "application/json", "x-api-key":partner_key} ,
 					json={
 						"prime":prime,
-						"partner_key": "partner_bXjiUDSnDMJe9W5oQApx75lDTAgmr2FylYwFF5nhM3DAEMSawElqMrsd",
-						"merchant_id": "qh70_TAISHIN",
+						"partner_key": partner_key,
+						"merchant_id": merchant_id,
 						"details":"TapPay Test",
 						"amount":price,
 						"cardholder": {
@@ -424,7 +439,7 @@ def api_orders_post():
 				)
 				
 				Tappay_return=json.loads(res.text)
-				print(Tappay_return["status"])
+				# print(Tappay_return["status"])
 				if Tappay_return["status"]==0:
 					my_cursor.execute("UPDATE `user` SET `order status`='paid' WHERE `order number`='"+str(order_number)+"'")
 					my_cursor.execute("UPDATE `user` SET `attractionId`=NULL,`date`=NULL,`time`=NULL,`price`=NULL WHERE `email`='"+session["email"]+"'")
