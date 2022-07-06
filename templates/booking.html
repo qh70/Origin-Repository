@@ -27,7 +27,7 @@
                         let logout=document.getElementById("logout");
                         logout.style.display="block";
                         let member_name=document.getElementById("member_name");
-                        member_name.innerHTML=JSON.parse(this.responseText)["data"]["name"];                        
+                        member_name.innerHTML=JSON.parse(this.responseText)["data"]["name"];  
                     }
                     else{
                         window.location="/"
@@ -48,6 +48,7 @@
                         let five=document.querySelector(".five");
                         // let hr=document.getElementsByTagName("hr")
                         let nobook_nologin=document.querySelector(".nobook_nologin")
+                        document.querySelector(".schedule").style.display = "block";
                         second_2.style.display="none";
                         three.style.display="none";
                         four.style.display="none";
@@ -95,6 +96,15 @@
                         price.innerHTML=booking_data["data"]["price"];
                         address.innerHTML=booking_data["data"]["attraction"]["address"];
                         document.getElementById("final_price").innerHTML=booking_data["data"]["price"];
+                        
+                        document.querySelector(".schedule").style.display = "block";
+                        document.querySelector(".three").style.display = "block";
+                        document.querySelector(".four").style.display = "block";
+                        document.querySelector(".five").style.display = "block";
+                        let hrs=document.getElementsByTagName("hr");
+                        for (let i=0;i<hrs.length;i++){
+                            hrs[i].style.display="block";
+                        }
                     }
                 }
                 req2.send();
@@ -239,14 +249,14 @@
                 display: flex;align-items: center;
                 border-bottom: #e6e4e4 solid 1px;
             }  
-            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
+            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177);cursor: pointer;}
             .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;color: #666666;cursor: pointer;}
             .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
             .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
             
             .empty_bar{height: 54px;margin: 0px;}
             /* 第二層============================================================ */
-            .schedule{width: 1000px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .schedule{width: 1000px;margin-top: 40px;margin-left: auto;margin-right: auto;display: none;}
             .welcome{font-size: 19px;font-weight: bold;}
             .nobook_nologin{margin-top: 50px;font-size: 16px;display: none;}
             .second-2{margin-top: 35px;margin-left: 8px;display: flex;}
@@ -259,26 +269,26 @@
             .address{height: 14px;margin-top: 20px;font-size: bold;}
             .icon_delete{width: 30px;height: 30px;margin-top: 0px;margin-bottom: auto;margin-left: auto;margin-right: 0px;}
             /* 第三層============================================================ */
-            .three{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .three{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;display: none;}
             .contact{font-size: 19px;font-weight: bold;}
             .name_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
             .email_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
             .phone_info{margin-top: 24px;margin-left: 0px;font-size: 16px;}
             .plz_check{margin-top: 20px;font-size: 16px;font-weight: bold;}
             /* 第四層============================================================ */
-            .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;}
+            .four{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;display: none;}
             .cc_info{font-size: 19px;font-weight: bold;}
             .four>div{margin-top: 24px;margin-left: 0px;}
             .tpfield {
                 height: 38px;
-                width: 200px;
+                width: 250px;
                 border: 1px solid gray;
                 margin: 5px 0;
                 padding: 5px;
             }
             #warming{margin-left: 0px;color: red;font-size: 16px;font-weight: bold;display: none;}
             /* 第五層============================================================ */
-            .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;}
+            .five{width: 980px;margin-top: 40px;margin-left: auto;margin-right: auto;text-align: right;display: none;}
             .check_pay{width: 173px;height: 36px;margin-top: 25px;margin-left: auto;margin-right: 0px;background-color: #448899;color: white;text-align: center;line-height: 36px;}
             
             /* 底層 */
@@ -320,11 +330,11 @@
             .signup_type_name{width: 310px;height: 47px;margin-top: 15px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
             .signup_type_email{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
             .signup_type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
-            .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
+            .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;cursor: pointer;}
             #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
             #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
-            .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
-            hr{width: 1200px;border: 1px solid #f1f0f0;}
+            .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;cursor: pointer;}
+            hr{width: 1200px;border: 1px solid #f1f0f0;display: none;}
             input{width: 200px;height: 38px;padding-left: 10px;}
             
             @media (max-width:1200px){
@@ -542,6 +552,7 @@
                                 "date": date.innerHTML,
                                 "time": time.innerHTML
                             },
+                            // 須注意 "聯絡 email" 與 "登入 email" 一致
                             "contact": {
                                 "name": inputName,
                                 "email": inputEmail,

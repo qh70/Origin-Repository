@@ -7,6 +7,13 @@
         <!-- <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous"></script> -->
         <script type="text/javascript">
+
+            // let fso = new ActiveXObject(Scripting.FileSystemObject);
+            // let f = fso.opentextfile("../env.txt",1,true);
+            // f.readline()
+            // let h = fso.opentextfile("env.txt",1,true);
+            // f.readline()
+
             let nextPage;
             let attractions_data;
             let btn_function;
@@ -110,56 +117,58 @@
                         // loading.src="../static/loading.jpg"
                         newdiv.appendChild(loading_div);
 
-                        setTimeout(function(){
-                            let req=new XMLHttpRequest();
-                            req.open("get","/api/attractions?page="+nextPage+"")
-                            req.onload=function(){
-                                attractions_data=JSON.parse(this.responseText)
-                                for(let j=0;j<12;j++){
-                                    if(attractions_data["data"][j]!=undefined){
-                                        let div1=document.createElement("a");
-                                        div1.className="picline1";
-                                        div1.href="/attraction/"+attractions_data["data"][j]["id"];
-                                        newdiv.appendChild(div1);
-                                        
-                                        //img
-                                        let image=document.createElement("img");
-                                        image.className="first4pics";
-                                        image.src=attractions_data["data"][j]["images"][0];
-                                        div1.appendChild(image);
-                                        // up_word
-                                        let up_word=document.createElement("div");
-                                        up_word.className="up_word";
-                                        up_word.innerHTML=attractions_data["data"][j]["name"]
-                                        div1.appendChild(up_word);
+                        // setTimeout(function(){
+                        let req=new XMLHttpRequest();
+                        req.open("get","/api/attractions?page="+nextPage+"")
+                        req.onload=function(){
+                            attractions_data=JSON.parse(this.responseText)
+                            for(let j=0;j<12;j++){
+                                if(attractions_data["data"][j]!=undefined){
+                                    let div1=document.createElement("a");
+                                    div1.className="picline1";
+                                    div1.href="/attraction/"+attractions_data["data"][j]["id"];
+                                    newdiv.appendChild(div1);
+                                    
+                                    //img
+                                    let image=document.createElement("img");
+                                    image.className="first4pics";
+                                    image.src=attractions_data["data"][j]["images"][0];
+                                    div1.appendChild(image);
+                                    // up_word
+                                    let up_word=document.createElement("div");
+                                    up_word.className="up_word";
+                                    up_word.innerHTML=attractions_data["data"][j]["name"]
+                                    div1.appendChild(up_word);
 
-                                        // down_word_zone
-                                        let down_word_zone=document.createElement("div");
-                                        down_word_zone.className="down_word_zone"
-                                        div1.appendChild(down_word_zone)
-                                        // down_word_left
-                                        let down_word_left=document.createElement("div");
-                                        down_word_left.className="down_word_left";
-                                        down_word_left.innerHTML=attractions_data["data"][j]["mrt"];
-                                        down_word_zone.appendChild(down_word_left);
-                                        // down_word_right
-                                        let down_word_right=document.createElement("div");
-                                        down_word_right.className="down_word_right";
-                                        down_word_right.innerHTML=attractions_data["data"][j]["category"];
-                                        down_word_zone.appendChild(down_word_right);
-                                        // 停止重複 loading 功能關閉
-                                        stop_loading_new_data="no"
-                                    }
+                                    // down_word_zone
+                                    let down_word_zone=document.createElement("div");
+                                    down_word_zone.className="down_word_zone"
+                                    div1.appendChild(down_word_zone)
+                                    // down_word_left
+                                    let down_word_left=document.createElement("div");
+                                    down_word_left.className="down_word_left";
+                                    down_word_left.innerHTML=attractions_data["data"][j]["mrt"];
+                                    down_word_zone.appendChild(down_word_left);
+                                    // down_word_right
+                                    let down_word_right=document.createElement("div");
+                                    down_word_right.className="down_word_right";
+                                    down_word_right.innerHTML=attractions_data["data"][j]["category"];
+                                    down_word_zone.appendChild(down_word_right);
+                                    // 停止重複 loading 功能關閉
+                                    stop_loading_new_data="no"
+                                    
+                                    setTimeout(function(){
+                                        loading_div.remove();
+                                    }, 1000);
                                 }
                             }
-                            req.send();
-                            async function remove(){
-                                 loading_div.remove();
-                            }
-                            remove();
-                        }, 1000);
-
-                        
+                        }
+                        req.send();
+                        //     async function remove(){
+                        //          loading_div.remove();
+                        //     }
+                        //     remove();
+                        // }, 1000);   
                     }
                     // 有 keyword，有下頁
                     else if(keyword_nextPage>0&keyword_nextPage!=null&btn_function==="yes"&stop_loading_new_data!="yes"){
@@ -328,7 +337,7 @@
                 margin-left: auto;margin-right: auto;
                 display: flex;align-items: center;
             }  
-            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
+            .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177);cursor: pointer;}
             .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;padding: 0px;color: #666666;cursor: pointer;}
             .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
             .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
@@ -391,9 +400,9 @@
             .type_email{width: 310px;height: 47px;margin-top: 15px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
             #email_login_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
             .type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
-            .login_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
+            .login_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;cursor: pointer;}
             #login_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
-            .not_yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
+            .not_yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;cursor: pointer;}
 
             /* 註冊彈出視窗 */
             .overlay_signup{width: 100%;height: 100%;display: none;position: fixed;z-index: 100;top: 0;left: 0;background: rgb(0,0,0,0.7);}
@@ -417,10 +426,10 @@
             #email_signup_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
             .signup_type_password{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;}
             #password_signup_error_message{width: 310px;margin-top: 8px;margin-left: 15px;box-sizing: border-box;padding: 0px;padding-left: 10px;color:red;display: none;}
-            .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;}
+            .signup_btn{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;border-radius: 5px;line-height: 47px;box-sizing: border-box;padding: 0px;background-color: #448899;color: white;cursor: pointer;}
             #signup_failed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: red;}
             #signup_succeed{width: 310px;height: 47px;margin-top: 10px;margin-left: 15px;font-size: 16px;text-align: center;line-height: 47px;box-sizing: border-box;padding: 0px;color: green;}
-            .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;}
+            .yet_account{width: 310px;height: 22px;margin-top: 10px;margin-bottom: 15px;margin-left: 15px;font-size: 16px;text-align: center;cursor: pointer;}
 
             /* 載入效果 */
             .loading_wrapper{
@@ -745,7 +754,7 @@
                     <input class="search_tourist_name" id="search_tourist_name" placeholder="輸入景點名稱查詢">
                     </input>
                     <button class="btn" onclick="btn()">
-                        <img src="../static/icon_search.png" />
+                        <img src="../static/icon_search.png" style="cursor:pointer;"/>
                     </button>
                 </div>
             </div>
