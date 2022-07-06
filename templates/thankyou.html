@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8"></meta>
         <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1"/>
-        <title>台北市景點列表</title>
+        <title>訂單狀況</title>
         <script type="text/javascript">
             let pathname=window.location.href
             
@@ -46,8 +46,9 @@
                     }else{
                         // img
                         let image = document.createElement("img");
-                        image.src=attraction_data["data"]["trip"]["attraction"]["image"].split(" ").pop();
-                        let img_container=document.getElementById("img_container");
+                        image.className = "pic";
+                        image.src = attraction_data["data"]["trip"]["attraction"]["image"].split(" ").pop();
+                        let img_container = document.getElementById("img_container");
                         img_container.appendChild(image);
                         // attraction_name
                         let attraction_name_cram = document.getElementById("attraction_name_cram");
@@ -110,7 +111,7 @@
                     margin-left: auto;margin-right: auto;
                     display: flex;align-items: center;
                 }  
-                .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177)}
+                .taipei_oneday_tourist{font-weight: bold;font-size: 20px;margin-left: 10px;color:rgb(34, 177, 177);cursor: pointer;}
                 .item1{width:100px;text-align: center;font-size: 15px;margin-left:auto;margin-right: -10px;padding: 0px;color: #666666;cursor: pointer;}
                 .item2{width:100px;text-align: center;font-size: 15px;float:right;margin-left: -10px;margin-right: 10px;color: #666666;cursor: pointer;}
                 .logout{width:100px;text-align: center;font-size: 15px;margin-left: -10px;margin-right: 10px;padding: 0px;color: #666666;display: none;cursor: pointer;}
@@ -124,9 +125,9 @@
 
                 /* 第三層 */
                 #long_hr{width: 1200px;border: 1px solid #f1f0f0;}
-                .three{display: flex;align-items: center;justify-content: center;}
+                .three{width: 1200px;margin-left: auto;margin-right: auto;align-items: center;justify-content: center;display: flex;}
                 #img_container{width: 450px;height: 338px;}
-                img{object-fit: cover;}
+                .pic{width: 450px;height: 338px;object-fit: cover;display: block;}
                 .three_2{width:90%;margin-left: 40px;padding-top: 0px;}
                 #attraction_name_cram{margin-top:0px;color:rgb(34, 177, 177);margin-bottom: 5px;}
                 h4{display: inline;}
@@ -145,7 +146,7 @@
                     #long_hr{width: 90%;border: 1px solid #f1f0f0;}
                     #img_container{width: 40%;}
                     
-                    img{width: 100%;display: block;}
+                    .pic{width: 100%;display: block;}
                     .three_2{width: 40%;margin-left: 40px;}
                 }
                 @media (max-width:600px){
@@ -160,7 +161,7 @@
                     /* 第三層========================================================== */
                     .three{display: block;}
                     #img_container{width: 90%;height: 210px;margin-left: auto;margin-right: auto;display: flex;}
-                    img{display:block;object-fit: cover;}
+                    .pic{display:block;object-fit: cover;}
                     .three_2{width: 90%;margin-top: 20px;margin-left: auto;margin-right: auto;}
                 }
             </style>
@@ -193,7 +194,7 @@
             <div class="three">
                 <!-- 左 照片 -->
                 <div id="img_container">
-                    <!-- <img src="https://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11000784.jpg"> -->
+                    <!-- <img src="https://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11000784.jpg" class="pic"> -->
                 </div>
                 <!-- 右 文字 -->
                 <div class="three_2">
