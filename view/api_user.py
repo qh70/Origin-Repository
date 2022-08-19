@@ -70,14 +70,17 @@ def api_user_patch():
 	email_login=request.json["email_login"]
 	password_login=request.json["password_login"]
 	try:
-		db_connection_mydb=pool.get_connection()
-		my_cursor=db_connection_mydb.cursor()
+		db_connection_mydb = pool.get_connection()
+		my_cursor = db_connection_mydb.cursor()
 		my_cursor.execute("SELECT `name`,`email`,`password` FROM `user` WHERE email='%s'" %email_login)
-		result=my_cursor.fetchone()
+		result = my_cursor.fetchone()
+		print(result)
 		if result!=None:
 			# 登入成功
-			if password_login==result[2]:
-				session["email"]=result[1]
+			print(result[2])
+			if password_login == result[2]:
+				print(result[1])
+				session["email"] = result[1]
 				return jsonify({"ok":True}), 200
 			# 密碼錯誤
 			else:
