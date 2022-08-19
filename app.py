@@ -218,7 +218,9 @@ def api_attraction_id(attractionId):
 ####
 @app.route("/api/user")
 def api_user_get():
+	print(session)
 	if session!={}:
+		print(session["email"])
 		if session["email"]!="logout":
 			try:
 				db_connection=pool.get_connection()
@@ -271,10 +273,13 @@ def api_user_patch():
 		my_cursor=db_connection.cursor()
 		my_cursor.execute("SELECT `name`,`email`,`password` FROM `user` WHERE email='%s'" %email_login)
 		result=my_cursor.fetchone()
+		print(result)
 		if result!=None:
 			# 登入成功
+			print(result[2])
 			if password_login==result[2]:
 				session["email"]=result[1]
+				print(session,"app.py")
 				return jsonify({"ok":True}), 200
 			# 密碼錯誤
 			else:
