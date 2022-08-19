@@ -20,7 +20,6 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 mysql_password = os.getenv("mysql_password")
-#####
 pool = pooling.MySQLConnectionPool(
 	host = "localhost",
 	user = "jerry",

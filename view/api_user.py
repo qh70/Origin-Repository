@@ -19,7 +19,9 @@ pool=pooling.MySQLConnectionPool(
 
 @api_User.route("/api/user")
 def api_user_get():
+	print(session)
 	if session!={}:
+		print(session["email"])
 		if session["email"]!="logout":
 			try:
 				db_connection_mydb=pool.get_connection()
