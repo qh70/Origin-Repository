@@ -81,6 +81,7 @@ def api_user_patch():
 			if password_login == result[2]:
 				print(result[1])
 				session["email"] = result[1]
+				print(session)
 				return jsonify({"ok":True}), 200
 			# 密碼錯誤
 			else:

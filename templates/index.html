@@ -23,6 +23,7 @@
 
             // 檢查登入狀態
             function init(){
+                console.log(document.cookie)
                 let req=new XMLHttpRequest();
                 req.open("get","/api/user");
                 req.onload=function(){
