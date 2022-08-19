@@ -215,7 +215,7 @@ def api_attraction_id(attractionId):
 		return jsonify({"error": True}), 500
 	finally:
 		db_connection.close()
-
+####
 # @app.route("/api/user")
 # def api_user_get():
 	# if session!={}:
