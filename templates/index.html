@@ -881,22 +881,43 @@
                 req.open("PATCH","/api/user");
                 req.setRequestHeader("Content-type", "application/json");
                 req.onload=function(){
-                    // 登入成功
-                    if(JSON.parse(this.responseText)["ok"]==true){
-                        window.location="/";
-                    }
-                    // 密碼錯誤
-                    else if(JSON.parse(this.responseText)["message"]=="密碼錯誤"){
-                        let login_failed=document.getElementById("login_failed");
-                        login_failed.innerHTML="密碼錯誤";
-                        login_failed.style.display="block";
-                    }
-                    // 此Email 未註冊帳號
-                    else if(JSON.parse(this.responseText)["message"]=="此Email 未註冊帳號"){
-                        let login_failed=document.getElementById("login_failed");
-                        login_failed.innerHTML="此Email 未註冊帳號";
-                        login_failed.style.display="block";
-                    }
+                    // // 登入成功
+                    // if(JSON.parse(this.responseText)["ok"]==true){
+                    //     window.location="/";
+                    // }
+                    // // 密碼錯誤
+                    // else if(JSON.parse(this.responseText)["message"]=="密碼錯誤"){
+                    //     let login_failed=document.getElementById("login_failed");
+                    //     login_failed.innerHTML="密碼錯誤";
+                    //     login_failed.style.display="block";
+                    // }
+                    // // 此Email 未註冊帳號
+                    // else if(JSON.parse(this.responseText)["message"]=="此Email 未註冊帳號"){
+                    //     let login_failed=document.getElementById("login_failed");
+                    //     login_failed.innerHTML="此Email 未註冊帳號";
+                    //     login_failed.style.display="block";
+                    // }
+                    
+                    let req=new XMLHttpRequest();
+                    req.open("get","/api/user");
+                    req.onload=function(){
+                        console.log("10")
+                        console.log(JSON.parse(this.responseText)["data"])
+                        if(JSON.parse(this.responseText)["data"]!=null){
+                            let item2=document.getElementById("item2");
+                            item2.style.display="none";
+                            let logout=document.getElementById("logout");
+                            logout.style.display="block";
+                        }
+                        else{
+                            let item2=document.getElementById("item2");
+                            item2.style.display="block";
+                            let logout=document.getElementById("logout");
+                            logout.style.display="none";
+                        }
+                    };
+                    req.send();
+
                 }
                 let email_login=document.getElementById("email_login");
                 let password_login=document.getElementById("password_login");

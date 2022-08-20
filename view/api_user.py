@@ -19,6 +19,7 @@ pool=pooling.MySQLConnectionPool(
 
 @api_User.route("/api/user")
 def api_user_get():
+	print("get")
 	print(session)
 	if session!={}:
 		print(session["email"])
